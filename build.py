@@ -138,12 +138,11 @@ def shell(base: str, title: str, desc: str, body: str, is_post: bool) -> str:
 {'<div id="bar"></div>' if is_post else ''}
 <header class="site"><div class="in">
   <a class="brand" href="{home}"><span class="mark" aria-hidden="true"></span>{SITE['title']}</a>
-  <nav><a href="{SITE['repo']}">GitHub</a><a href="{base}/feed.xml">RSS</a></nav>
+  <nav><a href="{base}/feed.xml">RSS</a></nav>
 </div></header>
 {body}
 <footer class="site"><div class="in">
   <p class="tag-line">{SITE['tagline']}</p>
-  <p class="mono dim">© {date.today().year} {SITE['author']} · <a href="{SITE['repo']}">GitHub</a></p>
 </div></footer>
 {POST_JS if is_post else ''}
 </body></html>"""
@@ -226,14 +225,14 @@ header.site nav a:hover{color:var(--accent)}
   display:grid;grid-template-columns:repeat(auto-fill,minmax(20rem,1fr));gap:2.6rem 2rem}
 .entry.lead{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
   gap:2.4rem;align-items:start}
-.entry.lead .cover{margin-bottom:0;aspect-ratio:16/10}
+.entry.lead .cover{margin-bottom:0}
 .entry.lead h2{font-size:clamp(1.5rem,3.2vw,2rem);line-height:1.34;margin:.15rem 0 .7rem}
 .entry.lead .sum{font-size:.98rem;line-height:1.85}
 @media (max-width:760px){ .entry.lead{display:block} .entry.lead .cover{margin-bottom:1.05rem} }
 .entry{display:block;border-top:1px solid var(--line);padding-top:1.1rem}
 .entry .cover{display:block;border-radius:12px;overflow:hidden;border:1px solid var(--line);
-  background:var(--raise);margin-bottom:1.05rem;aspect-ratio:16/9}
-.entry .cover img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+  background:var(--raise);margin-bottom:1.05rem;line-height:0}
+.entry .cover img{width:100%;height:auto;display:block}
 .entry:hover .cover{border-color:var(--accent)}
 .entry .kicker{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap}
 .entry time{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-size:.72rem;color:var(--dim)}
@@ -326,8 +325,9 @@ def build(base: str) -> None:
     OUT.mkdir(parents=True)
     (OUT / "style.css").write_text(STYLE)
     (OUT / "figures").mkdir()
-    for f in sorted(FIGS.glob("*.svg")):
-        shutil.copy(f, OUT / "figures" / f.name)
+    for f in sorted(FIGS.iterdir()):
+        if f.suffix.lower() in {".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"}:
+            shutil.copy(f, OUT / "figures" / f.name)
     (OUT / ".nojekyll").write_text("")
 
     posts = []
