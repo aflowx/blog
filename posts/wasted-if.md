@@ -1,7 +1,8 @@
 ---
 title: "被浪费的 if：聊聊最近热门的 Jev 模型"
 date: 2026-09-21
-slug: wasted-if
+slug: jev-system-one-explained
+aliases: [wasted-if]
 cover: figures/cover-wasted-if.png
 summary: "一次三字段的 JSON 回复要花 17 个 token，其中只有 3 个是答案。从这个事实出发，聊聊不生成文字的判断模型 Jev——它有多大、快在哪、准不准，以及我们自己跑的 8,801 条校准实测。"
 tags: [Jev, System One, 推理工程, 校准]

@@ -398,6 +398,23 @@ def build(base: str) -> None:
             url=purl, image=f"{base}/{cover}" if cover else "",
             published=str(p.get("date", "")), ld=ld_tag))
 
+    # 旧 slug → 新地址的跳转页
+    for p in posts:
+        raw_aliases = p.get("aliases", [])
+        if isinstance(raw_aliases, str):
+            raw_aliases = [x for x in raw_aliases.strip("[]").split(",")]
+        for old in [str(a).strip().strip('"').strip("'") for a in raw_aliases if str(a).strip()]:
+            new_url = f'{SITE["url"]}{base}/posts/{p["slug"]}/'
+            d = OUT / "posts" / old
+            d.mkdir(parents=True, exist_ok=True)
+            (d / "index.html").write_text(
+                f'<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">'
+                f'<title>{html.escape(p["title"])}</title>'
+                f'<link rel="canonical" href="{new_url}">'
+                f'<meta name="robots" content="noindex,follow">'
+                f'<meta http-equiv="refresh" content="0; url={new_url}">'
+                f'</head><body><p>已移至 <a href="{new_url}">{new_url}</a></p></body></html>')
+
     cards = []
     for idx, p in enumerate(posts):
         cover = p.get("cover") or (re.search(r"!\[.*?\]\((figures/[^)]+)\)", p["body"]) or [None, ""])[1]
