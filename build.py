@@ -9,7 +9,8 @@ summary / tags / cover）。图放 posts/figures/，正文里用 ![图 N](figure
 引用。cover 省略时自动取正文第一张图。推到 main 后 Actions 自动发布。
 """
 from __future__ import annotations
-import argparse, html, re, shutil, sys
+import argparse, html, json, re, shutil, sys
+from datetime import datetime
 from datetime import date
 from pathlib import Path
 
@@ -20,7 +21,7 @@ SITE = {
     "title": "推理工程笔记",
     "tagline": "把模型放进生产系统时，那些真正决定成败的细节。",
     "author": "Albert",
-    "url": "https://aflowx.github.io/blog",
+    "url": "https://aflowx.github.io",
     "repo": "https://github.com/aflowx/blog",
 }
 
@@ -85,12 +86,17 @@ def render(md: str, base: str) -> str:
             src = m.group(2)
             if not src.startswith(("http", "/")):
                 src = f"{base}/{src}"
-            cap = ""
-            if i + 1 < len(lines) and lines[i + 1].startswith("*图 "):
-                cap = f"<figcaption>{inline(lines[i+1].strip().strip('*'))}</figcaption>"
-                i += 1
-            out.append(f'<figure class="fig"><img src="{src}" alt="{html.escape(m.group(1))}" '
-                       f'loading="lazy">{cap}</figure>')
+            cap, alt = "", m.group(1)
+            j = i + 1
+            while j < len(lines) and not lines[j].strip():
+                j += 1
+            if j < len(lines) and lines[j].startswith("*图 "):
+                raw = lines[j].strip().strip("*")
+                cap = f"<figcaption>{inline(raw)}</figcaption>"
+                alt = re.sub(r"[`*]", "", re.sub(r"^图 \d+：", "", raw))[:160]
+                i = j
+            out.append(f'<figure class="fig"><img src="{src}" alt="{html.escape(alt)}" '
+                       f'loading="lazy" decoding="async">{cap}</figure>')
             i += 1; continue
 
         if ln.startswith("### "):
@@ -118,22 +124,39 @@ def token_strip(n: int = 17) -> str:
             + "</div>")
 
 # ── shell ────────────────────────────────────────────────────────────────────
-def shell(base: str, title: str, desc: str, body: str, is_post: bool) -> str:
+def shell(base: str, title: str, desc: str, body: str, is_post: bool,
+          url: str = "", image: str = "", published: str = "", ld: str = "") -> str:
     home = base or "/"
+    canon = f'{SITE["url"]}{url}'
+    img = f'{SITE["url"]}{image}' if image else ""
     return f"""<!DOCTYPE html>
 <html lang="zh-CN"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
+<meta name="author" content="{SITE['author']}">
+<link rel="canonical" href="{canon}">
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
 <meta property="og:type" content="{'article' if is_post else 'website'}">
+<meta property="og:url" content="{canon}">
+<meta property="og:site_name" content="{SITE['title']}">
+<meta property="og:locale" content="zh_CN">
+{f'<meta property="og:image" content="{img}">' if img else ''}
+{f'<meta property="article:published_time" content="{published}">' if published else ''}
+{f'<meta property="article:author" content="{SITE["author"]}">' if is_post else ''}
+<meta name="twitter:card" content="{'summary_large_image' if img else 'summary'}">
+<meta name="twitter:title" content="{html.escape(title)}">
+<meta name="twitter:description" content="{html.escape(desc)}">
+{f'<meta name="twitter:image" content="{img}">' if img else ''}
+<link rel="icon" href="{base}/favicon.svg" type="image/svg+xml">
 <link rel="alternate" type="application/rss+xml" title="{SITE['title']}" href="{base}/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="{base}/style.css">
+{ld}
 </head><body>
 {'<div id="bar"></div>' if is_post else ''}
 <header class="site"><div class="in">
@@ -356,7 +379,24 @@ def build(base: str) -> None:
         foot = f'<div class="post-foot"><a href="{base or "/"}">← 全部文章</a></div>'
         page = hero + f'<div class="wrap"><article>{body_html}{foot}</article>{toc}</div>'
         d = OUT / "posts" / p["slug"]; d.mkdir(parents=True)
-        (d / "index.html").write_text(shell(base, p["title"], p.get("summary", ""), page, True))
+        cover = p.get("cover") or (re.search(r"!\[.*?\]\((figures/[^)]+)\)", p["body"]) or [None, ""])[1]
+        purl = f'{base}/posts/{p["slug"]}/'
+        ld = json.dumps({
+            "@context": "https://schema.org", "@type": "BlogPosting",
+            "headline": p["title"], "description": p.get("summary", ""),
+            "datePublished": str(p.get("date", "")), "dateModified": str(p.get("date", "")),
+            "author": {"@type": "Person", "name": SITE["author"]},
+            "publisher": {"@type": "Organization", "name": SITE["title"]},
+            "mainEntityOfPage": f'{SITE["url"]}{purl}',
+            "inLanguage": "zh-CN",
+            "keywords": ", ".join(p.get("tags", [])),
+            **({"image": f'{SITE["url"]}{base}/{cover}'} if cover else {}),
+        }, ensure_ascii=False)
+        ld_tag = f'<script type="application/ld+json">{ld}</script>'
+        (d / "index.html").write_text(shell(
+            base, p["title"], p.get("summary", ""), page, True,
+            url=purl, image=f"{base}/{cover}" if cover else "",
+            published=str(p.get("date", "")), ld=ld_tag))
 
     cards = []
     for idx, p in enumerate(posts):
@@ -373,17 +413,62 @@ def build(base: str) -> None:
     index = (f'<section class="masthead">{token_strip()}'
              f'<h1>{SITE["title"]}</h1><p>{SITE["tagline"]}</p></section>'
              f'<section class="feed">{"".join(cards)}</section>')
-    (OUT / "index.html").write_text(shell(base, SITE["title"], SITE["tagline"], index, False))
+    site_ld = json.dumps({
+        "@context": "https://schema.org", "@type": "Blog",
+        "name": SITE["title"], "description": SITE["tagline"],
+        "url": SITE["url"], "inLanguage": "zh-CN",
+        "author": {"@type": "Person", "name": SITE["author"]},
+        "blogPost": [{"@type": "BlogPosting", "headline": q["title"],
+                      "url": f'{SITE["url"]}{base}/posts/{q["slug"]}/',
+                      "datePublished": str(q.get("date", ""))} for q in posts],
+    }, ensure_ascii=False)
+    home_cover = posts[0].get("cover") if posts else ""
+    (OUT / "index.html").write_text(shell(
+        base, SITE["title"], SITE["tagline"], index, False,
+        url=f"{base}/", image=f"{base}/{home_cover}" if home_cover else "",
+        ld=f'<script type="application/ld+json">{site_ld}</script>'))
 
-    rss = "".join(f"<item><title>{html.escape(p['title'])}</title>"
-                  f"<link>{SITE['url']}/posts/{p['slug']}/</link>"
-                  f"<guid>{SITE['url']}/posts/{p['slug']}/</guid>"
-                  f"<description>{html.escape(p.get('summary',''))}</description></item>"
-                  for p in posts)
+    def rfc822(d: str) -> str:
+        try:
+            return datetime.strptime(str(d), "%Y-%m-%d").strftime("%a, %d %b %Y 00:00:00 +0000")
+        except ValueError:
+            return ""
+    rss = "".join(
+        f"<item><title>{html.escape(p['title'])}</title>"
+        f"<link>{SITE['url']}{base}/posts/{p['slug']}/</link>"
+        f"<guid isPermaLink=\"true\">{SITE['url']}{base}/posts/{p['slug']}/</guid>"
+        f"<pubDate>{rfc822(p.get('date',''))}</pubDate>"
+        + "".join(f"<category>{html.escape(t)}</category>" for t in p.get("tags", []))
+        + f"<description>{html.escape(p.get('summary',''))}</description></item>"
+        for p in posts)
     (OUT / "feed.xml").write_text(
-        f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel>'
-        f"<title>{SITE['title']}</title><link>{SITE['url']}</link>"
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>'
+        f"<title>{SITE['title']}</title><link>{SITE['url']}{base}/</link>"
+        f'<atom:link href="{SITE["url"]}{base}/feed.xml" rel="self" type="application/rss+xml"/>'
+        f"<language>zh-CN</language>"
         f"<description>{SITE['tagline']}</description>{rss}</channel></rss>")
+
+    # sitemap / robots / favicon
+    urls = [f"{base}/"] + [f"{base}/posts/{p['slug']}/" for p in posts]
+    lastmod = max((str(p.get("date", "")) for p in posts), default="")
+    (OUT / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        + "".join(f"<url><loc>{SITE['url']}{u}</loc>"
+                  + (f"<lastmod>{lastmod}</lastmod>" if lastmod else "")
+                  + f"<changefreq>{'weekly' if u.endswith('/') and u == urls[0] else 'monthly'}</changefreq>"
+                  + f"<priority>{'1.0' if u == urls[0] else '0.8'}</priority></url>" for u in urls)
+        + "</urlset>")
+    (OUT / "robots.txt").write_text(
+        f"User-agent: *\nAllow: /\n\nSitemap: {SITE['url']}{base}/sitemap.xml\n")
+    (OUT / "favicon.svg").write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
+        '<rect width="32" height="32" rx="7" fill="#0E7C63"/>'
+        '<rect x="7" y="9" width="7" height="7" rx="2" fill="#FAF8F3" opacity=".45"/>'
+        '<rect x="18" y="9" width="7" height="7" rx="2" fill="#FFB4A2"/>'
+        '<rect x="7" y="19" width="7" height="7" rx="2" fill="#FAF8F3" opacity=".45"/>'
+        '<rect x="18" y="19" width="7" height="7" rx="2" fill="#FAF8F3" opacity=".45"/></svg>')
 
     print(f"✓ {len(posts)} 篇 → {OUT.relative_to(ROOT)}  (base={base or '/'})")
     for p in posts:
