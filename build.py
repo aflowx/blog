@@ -106,7 +106,7 @@ def render(md: str, base: str) -> str:
     return "\n".join(out)
 
 # ---------------------------------------------------------------- templates
-def shell(base: str, title: str, desc: str, body: str, is_post: bool) -> str:
+def shell(base: str, title: str, desc: str, body: str, is_post: bool, toc: str = "") -> str:
     home = base or "/"
     return f"""<!DOCTYPE html>
 <html lang="zh-CN"><head>
@@ -120,88 +120,168 @@ def shell(base: str, title: str, desc: str, body: str, is_post: bool) -> str:
 <link rel="alternate" type="application/rss+xml" title="{SITE['title']}" href="{base}/feed.xml">
 <link rel="stylesheet" href="{base}/style.css">
 </head><body>
-<header class="site">
+{'<div id="bar"></div>' if is_post else ''}
+<header class="site"><div class="in">
   <a class="brand" href="{home}">{SITE['title']}</a>
   <nav><a href="{SITE['repo']}">GitHub</a><a href="{base}/feed.xml">RSS</a></nav>
-</header>
+</div></header>
 <main>{body}</main>
-<footer class="site">
+<footer class="site"><div class="in">
   <p>{SITE['tagline']}</p>
-  <p class="dim">© {date.today().year} {SITE['author']} · 内容与代码在 <a href="{SITE['repo']}">GitHub</a></p>
-</footer>
+  <p>© {date.today().year} {SITE['author']} · 内容与代码在 <a href="{SITE['repo']}">GitHub</a></p>
+</div></footer>
+{POST_JS if is_post else ''}
 </body></html>"""
+
+POST_JS = """<script>
+(function(){
+  var bar=document.getElementById('bar');
+  var links=[].slice.call(document.querySelectorAll('aside.toc a'));
+  var heads=links.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});
+  function tick(){
+    var h=document.documentElement;
+    var p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+    if(bar) bar.style.width=(p*100).toFixed(2)+'%';
+    var cur=-1;
+    for(var i=0;i<heads.length;i++){ if(heads[i]&&heads[i].getBoundingClientRect().top<120) cur=i; }
+    links.forEach(function(a,i){ a.classList.toggle('on', i===cur); });
+  }
+  addEventListener('scroll',tick,{passive:true}); addEventListener('resize',tick); tick();
+})();
+</script>"""
 
 STYLE = """
 :root{
-  --bg:#fffdf8; --fg:#24304a; --dim:#66728b; --rule:#eceef4;
-  --accent:#2f8f74; --card:#ffffff; --code-bg:#1e293b; --code-fg:#e2e8f0;
-  --measure:46rem;
+  --paper:#FBFAF7; --ink:#1B2430; --body:#39414F; --dim:#8A93A3;
+  --line:#E8E6E0; --hair:#F1EFEA; --card:#FFFFFF;
+  --accent:#16876A; --accent-soft:#D9F0E6; --mint:#A8E0D1; --peach:#FFB4A2;
+  --code-bg:#181D26; --code-fg:#DDE3EC; --code-dim:#6B7789;
+  --measure:40rem;
 }
 @media (prefers-color-scheme:dark){
-  :root{ --bg:#14161c; --fg:#e6e8ee; --dim:#98a0b3; --rule:#252a35;
-         --accent:#6fc9aa; --card:#1b1e26; --code-bg:#11141a; --code-fg:#dbe2ee; }
+  :root{ --paper:#0E1116; --ink:#EDEFF3; --body:#C3C9D4; --dim:#7D8797;
+         --line:#232833; --hair:#1A1E26; --card:#151A22;
+         --accent:#6FC9AA; --accent-soft:#17362D;
+         --code-bg:#0A0D12; --code-fg:#D7DEE9; --code-dim:#5B6675; }
 }
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--fg);
-  font:17px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC",sans-serif;
-  letter-spacing:.01em}
-main{max-width:var(--measure);margin:0 auto;padding:0 1.25rem 6rem}
-a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent}
-a:hover{border-bottom-color:currentColor}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--body);
+  font:17px/1.9 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC",sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  font-variant-numeric:tabular-nums;letter-spacing:.02em}
+a{color:inherit;text-decoration:none}
 
-header.site{max-width:var(--measure);margin:0 auto;padding:1.75rem 1.25rem;
-  display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.brand{font-weight:700;font-size:1.05rem;color:var(--fg)}
-header.site nav a{margin-left:1.1rem;font-size:.9rem;color:var(--dim)}
+/* progress */
+#bar{position:fixed;top:0;left:0;height:2px;width:0;background:var(--accent);z-index:99}
 
-h1{font-size:1.95rem;line-height:1.35;margin:.5rem 0 .6rem;letter-spacing:-.01em}
-h2{font-size:1.32rem;margin:3.2rem 0 1rem;padding-top:1.1rem;border-top:1px solid var(--rule)}
-h3{font-size:1.08rem;margin:2.2rem 0 .7rem;color:var(--fg)}
-p{margin:0 0 1.15rem}
-strong{font-weight:650}
-hr{border:0;border-top:1px solid var(--rule);margin:2.6rem 0}
-blockquote{margin:0 0 1.2rem;padding:.85rem 1.1rem;background:var(--card);
-  border-left:3px solid var(--accent);border-radius:0 8px 8px 0;color:var(--dim);font-size:.96rem}
-code{background:var(--rule);padding:.12em .4em;border-radius:4px;font-size:.88em;
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+/* header */
+header.site{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 88%,transparent);
+  backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--hair)}
+header.site .in{max-width:64rem;margin:0 auto;padding:.85rem 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.brand{font-weight:800;font-size:.95rem;color:var(--ink);letter-spacing:-.01em;
+  display:inline-flex;align-items:center;gap:.5rem}
+.brand::before{content:"";width:9px;height:9px;border-radius:3px;background:var(--accent)}
+header.site nav a{font-size:.8rem;color:var(--dim);margin-left:1.1rem}
+header.site nav a:hover{color:var(--accent)}
 
-figure{margin:0 0 1.6rem}
-figure.code{background:var(--code-bg);border-radius:10px;overflow:hidden}
-figure.code figcaption{padding:.55rem .95rem;font:.78rem ui-monospace,Menlo,monospace;
-  color:#7b8798;border-bottom:1px solid rgba(255,255,255,.07)}
-figure.code pre{margin:0;padding:.95rem 1.1rem;overflow-x:auto}
-figure.code code{background:none;padding:0;color:var(--code-fg);font-size:.84rem;line-height:1.7}
+main{max-width:64rem;margin:0 auto;padding:0 1.5rem 7rem}
 
-figure.fig{margin:2rem 0 2.2rem}
-figure.fig img{width:100%;display:block;border-radius:12px;background:#fffdf8;
-  border:1px solid var(--rule)}
-figure.fig figcaption,p.note{font-size:.86rem;line-height:1.7;color:var(--dim);
-  margin:.7rem 0 0;text-align:center}
-p.note{text-align:left;margin:0 0 1.15rem}
+/* ---------- index ---------- */
+.masthead{padding:5.5rem 0 3.5rem;border-bottom:1px solid var(--line)}
+.masthead h1{font-size:clamp(2.2rem,6vw,3.4rem);line-height:1.1;margin:0 0 1rem;
+  color:var(--ink);font-weight:850;letter-spacing:-.035em}
+.masthead p{max-width:34rem;margin:0;color:var(--dim);font-size:1.02rem;line-height:1.8}
+.masthead .rule{width:56px;height:4px;border-radius:2px;background:var(--accent);margin:0 0 1.6rem}
 
-.tablewrap{overflow-x:auto;margin:0 0 1.6rem}
-table{border-collapse:collapse;width:100%;font-size:.92rem}
-th,td{border-bottom:1px solid var(--rule);padding:.55rem .7rem;text-align:left;vertical-align:top}
-th{font-weight:650;background:var(--card)}
-
-.meta{color:var(--dim);font-size:.88rem;margin:0 0 2.4rem}
-.tag{display:inline-block;background:var(--card);border:1px solid var(--rule);
-  border-radius:999px;padding:.08rem .6rem;margin-right:.35rem;font-size:.78rem;color:var(--dim)}
-
-.hero{padding:1rem 0 2.6rem;border-bottom:1px solid var(--rule);margin-bottom:2.2rem}
-.hero p{color:var(--dim);margin:0}
 .postlist{list-style:none;padding:0;margin:0}
-.postlist li{padding:1.6rem 0;border-bottom:1px solid var(--rule)}
-.postlist h2{font-size:1.2rem;margin:0 0 .35rem;border:0;padding:0}
-.postlist .sum{color:var(--dim);font-size:.95rem;margin:.4rem 0 .55rem}
-.postlist time{color:var(--dim);font-size:.82rem;font-variant-numeric:tabular-nums}
+.postlist li{border-bottom:1px solid var(--line)}
+.postlist a.card{display:block;padding:2.4rem 0;transition:padding-left .25s ease}
+.postlist a.card:hover{padding-left:.7rem}
+.postlist .kicker{display:flex;align-items:center;gap:.75rem;margin-bottom:.7rem}
+.postlist time{font-size:.76rem;color:var(--dim)}
+.postlist .dot{width:3px;height:3px;border-radius:50%;background:var(--line)}
+.postlist h2{font-size:clamp(1.25rem,2.6vw,1.6rem);line-height:1.4;margin:0 0 .6rem;
+  color:var(--ink);font-weight:750;letter-spacing:-.02em}
+.postlist a.card:hover h2{color:var(--accent)}
+.postlist .sum{margin:0 0 1rem;color:var(--dim);font-size:.95rem;line-height:1.85;max-width:44rem}
+.more{font-size:.8rem;color:var(--accent);font-weight:600}
 
-footer.site{max-width:var(--measure);margin:0 auto;padding:2rem 1.25rem 3rem;
-  border-top:1px solid var(--rule);color:var(--dim);font-size:.86rem}
-footer.site p{margin:0 0 .35rem}
-.dim{color:var(--dim)}
-@media (max-width:640px){ body{font-size:16px} h1{font-size:1.6rem} main{padding-bottom:4rem} }
+.tag{display:inline-block;font-size:.7rem;color:var(--dim);border:1px solid var(--line);
+  border-radius:999px;padding:.1rem .58rem;margin-right:.3rem;background:var(--card)}
+
+/* ---------- article ---------- */
+.wrap{display:grid;grid-template-columns:minmax(0,var(--measure)) 1fr;gap:3.5rem;
+  justify-content:center;padding-top:3.5rem}
+@media (max-width:980px){ .wrap{display:block;padding-top:2.5rem} aside.toc{display:none} }
+
+article{min-width:0;max-width:var(--measure)}
+.post-head{margin-bottom:3rem}
+.post-head .eyebrow{margin:0 0 1rem}
+.post-head h1{font-size:clamp(1.85rem,4.2vw,2.6rem);line-height:1.28;margin:0 0 1.1rem;
+  color:var(--ink);font-weight:850;letter-spacing:-.03em}
+.post-head .meta{display:flex;align-items:center;gap:.7rem;font-size:.78rem;color:var(--dim);
+  padding-bottom:1.6rem;border-bottom:1px solid var(--line)}
+
+article h2{font-size:1.28rem;line-height:1.5;margin:3.6rem 0 1.1rem;color:var(--ink);
+  font-weight:780;letter-spacing:-.015em;padding-left:.9rem;border-left:3px solid var(--accent);
+  scroll-margin-top:5rem}
+article h3{font-size:1.04rem;margin:2.4rem 0 .8rem;color:var(--ink);font-weight:700}
+article p{margin:0 0 1.25rem}
+article strong{color:var(--ink);font-weight:700}
+article a[href]{color:var(--accent);border-bottom:1px solid var(--accent-soft)}
+article a[href]:hover{border-bottom-color:var(--accent)}
+hr{border:0;border-top:1px solid var(--line);margin:3rem 0}
+blockquote{margin:0 0 1.35rem;padding:1rem 1.2rem;background:var(--card);
+  border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;
+  color:var(--dim);font-size:.95rem;line-height:1.8}
+code{background:var(--hair);color:var(--ink);padding:.12em .42em;border-radius:5px;
+  font:500 .86em ui-monospace,SFMono-Regular,Menlo,monospace}
+
+figure{margin:0 0 1.8rem}
+figure.code{background:var(--code-bg);border-radius:12px;overflow:hidden;margin-bottom:1.8rem}
+figure.code figcaption{padding:.6rem 1rem;font:.72rem ui-monospace,Menlo,monospace;
+  color:var(--code-dim);letter-spacing:.08em;text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,.06)}
+figure.code pre{margin:0;padding:1rem 1.15rem;overflow-x:auto}
+figure.code code{background:none;padding:0;color:var(--code-fg);font-size:.82rem;line-height:1.75}
+
+figure.fig{margin:2.4rem 0 2.6rem}
+@media (min-width:1100px){ figure.fig{width:calc(100% + 5rem);margin-left:-2.5rem} }
+figure.fig img{width:100%;display:block;border-radius:14px;border:1px solid var(--line);
+  background:#FBFAF7}
+figure.fig figcaption{margin:.85rem 0 0;font-size:.82rem;line-height:1.75;color:var(--dim)}
+p.note{font-size:.84rem;line-height:1.8;color:var(--dim);margin:0 0 1.25rem}
+
+.tablewrap{overflow-x:auto;margin:0 0 1.8rem;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:.62rem .85rem;text-align:left;vertical-align:top;border-bottom:1px solid var(--hair)}
+th{font-weight:700;color:var(--ink);background:var(--card);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+
+/* TOC rail */
+aside.toc{position:sticky;top:5rem;align-self:start;max-height:calc(100vh - 8rem);overflow-y:auto;
+  font-size:.82rem;line-height:1.6;padding-left:1.5rem;border-left:1px solid var(--line)}
+aside.toc .lab{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  margin:0 0 .85rem;font-weight:700}
+aside.toc ol{list-style:none;margin:0;padding:0;counter-reset:t}
+aside.toc li{counter-increment:t;margin:0 0 .6rem}
+aside.toc a{color:var(--dim);display:block;padding-left:1.6rem;position:relative}
+aside.toc a::before{content:counter(t,decimal-leading-zero);position:absolute;left:0;
+  font:600 .68rem ui-monospace,Menlo,monospace;color:var(--line)}
+aside.toc a:hover,aside.toc a.on{color:var(--accent)}
+aside.toc a.on::before{color:var(--accent)}
+
+.post-foot{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--line)}
+.post-foot a{color:var(--accent);font-size:.9rem;font-weight:600}
+
+footer.site{border-top:1px solid var(--line);margin-top:4rem}
+footer.site .in{max-width:64rem;margin:0 auto;padding:2.2rem 1.5rem 3.5rem;
+  color:var(--dim);font-size:.82rem;line-height:1.8}
+footer.site a{color:var(--accent)}
+@media (max-width:640px){ body{font-size:16px} .masthead{padding:3.2rem 0 2.4rem} }
 """
 
 # ---------------------------------------------------------------- build
@@ -224,19 +304,35 @@ def build(base: str) -> None:
     posts.sort(key=lambda p: str(p.get("date", "")), reverse=True)
 
     for p in posts:
+        html_body = render(p["body"], base)
+        heads = re.findall(r'<h2 id="([^"]+)">(.*?)</h2>', html_body)
+        toc = ""
+        if len(heads) > 2:
+            items = "".join(f'<li><a href="#{a}">{re.sub(r"<[^>]+>", "", t)}</a></li>' for a, t in heads)
+            toc = f'<aside class="toc"><p class="lab">目录</p><ol>{items}</ol></aside>'
         tags = "".join(f'<span class="tag">{html.escape(t)}</span>' for t in p.get("tags", []))
-        article = (f"<article><h1>{html.escape(p['title'])}</h1>"
-                   f"<p class='meta'><time>{p.get('date','')}</time> · {SITE['author']}<br>{tags}</p>"
-                   f"{render(p['body'], base)}</article>")
+        mins = max(1, round(len(re.sub(r"<[^>]+>", "", html_body)) / 500))
+        head = (f'<div class="post-head"><p class="eyebrow">{tags}</p>'
+                f'<h1>{html.escape(p["title"])}</h1>'
+                f'<p class="meta"><span class="mono">{p.get("date","")}</span>'
+                f'<span class="dot"></span><span>{SITE["author"]}</span>'
+                f'<span class="dot"></span><span class="mono">约 {mins} 分钟</span></p></div>')
+        foot = f'<div class="post-foot"><a href="{base or "/"}">← 回到全部文章</a></div>'
+        page = f'<div class="wrap"><article>{head}{html_body}{foot}</article>{toc}</div>'
         d = OUT / "posts" / p["slug"]; d.mkdir(parents=True)
-        (d / "index.html").write_text(shell(base, p["title"], p.get("summary", ""), article, True))
+        (d / "index.html").write_text(shell(base, p["title"], p.get("summary", ""), page, True, toc))
 
     items = "".join(
-        f"<li><h2><a href='{base}/posts/{p['slug']}/'>{html.escape(p['title'])}</a></h2>"
-        f"<time>{p.get('date','')}</time>"
-        f"<p class='sum'>{html.escape(p.get('summary',''))}</p></li>" for p in posts)
-    index = (f"<div class='hero'><h1>{SITE['title']}</h1><p>{SITE['tagline']}</p></div>"
-             f"<ul class='postlist'>{items}</ul>")
+        f'<li><a class="card" href="{base}/posts/{p["slug"]}/">'
+        f'<div class="kicker"><time class="mono">{p.get("date","")}</time>'
+        f'<span class="dot"></span>'
+        + "".join(f'<span class="tag">{html.escape(t)}</span>' for t in p.get("tags", [])) +
+        f'</div><h2>{html.escape(p["title"])}</h2>'
+        f'<p class="sum">{html.escape(p.get("summary",""))}</p>'
+        f'<span class="more">读全文 →</span></a></li>' for p in posts)
+    index = (f'<div class="masthead"><div class="rule"></div>'
+             f'<h1>{SITE["title"]}</h1><p>{SITE["tagline"]}</p></div>'
+             f'<ul class="postlist">{items}</ul>')
     (OUT / "index.html").write_text(shell(base, SITE["title"], SITE["tagline"], index, False))
 
     rss = "".join(
