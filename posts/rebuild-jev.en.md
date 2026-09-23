@@ -3,7 +3,7 @@ title: "Quire: rebuilding Jev's decision engine on a frozen 4B model"
 date: 2026-09-23
 slug: build-jev-like-system-one-model
 aliases: [rebuild-jev]
-cover: figures/en/p2-fig01-architecture.svg
+cover: figures/en/cover-quire.jpg
 summary: "We built our own Jev-style decision engine on an off-the-shelf Qwen3.5-4B, with no training. The speed and the calibration come from the architecture and reproduce on a laptop. Judgement on the hardest questions comes mostly from the model, and that part is still a work in progress."
 tags: [Jev, Quire, System One, inference, calibration]
 ---
