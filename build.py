@@ -7,6 +7,10 @@
 新增文章：在 posts/ 下放一个 .md，开头写 frontmatter（title / date / slug /
 summary / tags / cover）。图放 posts/figures/，正文里用 ![图 N](figures/xxx.svg)
 引用。cover 省略时自动取正文第一张图。推到 main 后 Actions 自动发布。
+
+双语：英文版命名为 <同名>.en.md，frontmatter 里的 slug 与中文版相同即自动配对。
+中文在 /posts/<slug>/，英文在 /en/posts/<slug>/。首次访问按浏览器首选语言跳到
+对应译本（仅当译本存在；爬虫不跳）；页眉的切换链接会记住读者的选择。
 """
 from __future__ import annotations
 import argparse, html, json, re, shutil, sys
@@ -18,12 +22,28 @@ ROOT = Path(__file__).resolve().parent
 BLOG, FIGS, OUT = ROOT / "posts", ROOT / "posts" / "figures", ROOT / "_site"
 
 SITE = {
-    "title": "推理工程笔记",
-    "tagline": "把模型放进生产系统时，那些真正决定成败的细节。",
     "author": "Albert",
     "url": "https://aflowx.github.io",
     "repo": "https://github.com/aflowx/blog",
 }
+
+L10N = {
+    "zh": {"html": "zh-CN", "og": "zh_CN", "prefix": "",
+           "title": "推理工程笔记",
+           "tagline": "把模型放进生产系统时，那些真正决定成败的细节。",
+           "toc": "目录", "mins": "约 {n} 分钟", "back": "← 全部文章", "moved": "已移至",
+           "switch": "EN", "switch_to": "en", "switch_title": "Read in English"},
+    "en": {"html": "en", "og": "en_US", "prefix": "/en",
+           "title": "Inference Engineering Notes",
+           "tagline": "The unglamorous details that decide whether a model survives production.",
+           "toc": "Contents", "mins": "{n} min read", "back": "← All posts", "moved": "Moved to",
+           "switch": "中文", "switch_to": "zh", "switch_title": "阅读中文版"},
+}
+
+def minutes(text: str, lang: str) -> int:
+    if lang == "en":
+        return max(1, round(len(re.findall(r"[A-Za-z0-9']+", text)) / 230))
+    return max(1, round(len(text) / 500))
 
 # ── frontmatter ──────────────────────────────────────────────────────────────
 def split_frontmatter(text: str) -> tuple[dict, str]:
@@ -47,6 +67,7 @@ def inline(t: str) -> str:
     t = html.escape(t)
     t = re.sub(r"`([^`]+)`", lambda m: f'<code>{m.group(1)}</code>', t)
     t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
+    t = re.sub(r"(?<![*\w])\*(?![\s*])(.+?)(?<![\s*])\*(?![*\w])", r"<em>\1</em>", t)
     t = re.sub(r"\[(.+?)\]\((.+?)\)", r'<a href="\2">\1</a>', t)
     return t
 
@@ -90,25 +111,44 @@ def render(md: str, base: str) -> str:
             j = i + 1
             while j < len(lines) and not lines[j].strip():
                 j += 1
-            if j < len(lines) and lines[j].startswith("*图 "):
+            if j < len(lines) and re.match(r"^\*(图 |截图 |动图 |Figure |Screenshot |Animation )", lines[j]):
                 raw = lines[j].strip().strip("*")
                 cap = f"<figcaption>{inline(raw)}</figcaption>"
-                alt = re.sub(r"[`*]", "", re.sub(r"^图 \d+：", "", raw))[:160]
+                alt = re.sub(r"[`*]", "", re.sub(r"^((图|截图|动图) \d+：|(Figure|Screenshot|Animation) \d+[:.] ?)", "", raw))[:160]
                 i = j
             out.append(f'<figure class="fig"><img src="{src}" alt="{html.escape(alt)}" '
                        f'loading="lazy" decoding="async">{cap}</figure>')
             i += 1; continue
+
+        if re.match(r"^(- |\d+\. )", ln):
+            ordered = not ln.startswith("- ")
+            items = []
+            while i < len(lines) and re.match(r"^(- |\d+\. )", lines[i]):
+                items.append(re.sub(r"^(- |\d+\. )", "", lines[i])); i += 1
+            tag = "ol" if ordered else "ul"
+            out.append(f"<{tag}>" + "".join(f"<li>{inline(x)}</li>" for x in items) + f"</{tag}>")
+            continue
+
+        if ln.startswith(">"):
+            paras, cur = [], []
+            while i < len(lines) and lines[i].startswith(">"):
+                t = lines[i][1:].strip()
+                if t: cur.append(t)
+                elif cur: paras.append(" ".join(cur)); cur = []
+                i += 1
+            if cur: paras.append(" ".join(cur))
+            out.append("<blockquote>" + "".join(f"<p>{inline(x)}</p>" for x in paras) + "</blockquote>")
+            continue
 
         if ln.startswith("### "):
             out.append(f"<h3>{inline(ln[4:])}</h3>")
         elif ln.startswith("## "):
             t = ln[3:]
             out.append(f'<h2 id="{slugify(t)}">{inline(t)}</h2>')
-        elif ln.startswith("> "):
-            out.append(f"<blockquote>{inline(ln[2:])}</blockquote>")
         elif ln.strip() == "---":
             out.append("<hr>")
-        elif ln.strip().startswith("*") and ln.strip().endswith("*") and len(ln) > 30:
+        elif (ln.strip().startswith("*") and not ln.strip().startswith("**")
+              and ln.strip().endswith("*") and len(ln) > 30):
             out.append(f'<p class="note">{inline(ln.strip().strip("*"))}</p>')
         elif ln.strip():
             out.append(f"<p>{inline(ln)}</p>")
@@ -124,25 +164,55 @@ def token_strip(n: int = 17) -> str:
             + "</div>")
 
 # ── shell ────────────────────────────────────────────────────────────────────
+LANG_JS = """<script>
+(function(){
+  var here=%s, twin=%s;
+  if(!twin||/bot|crawl|spider|slurp|preview|lighthouse/i.test(navigator.userAgent)) return;
+  var want=null; try{want=localStorage.getItem('lang')}catch(e){}
+  if(!want){ var l=(navigator.languages&&navigator.languages[0])||navigator.language||'';
+             want=/^zh/i.test(l)?'zh':'en'; }
+  if(want!==here) location.replace(twin);
+})();
+</script>"""
+
 def shell(base: str, title: str, desc: str, body: str, is_post: bool,
-          url: str = "", image: str = "", published: str = "", ld: str = "") -> str:
-    home = base or "/"
+          url: str = "", image: str = "", published: str = "", ld: str = "",
+          lang: str = "zh", twin: str = "", other: str = "") -> str:
+    """twin：同一页面的另一语言版本（没有译本就为空，不自动跳）；
+    other：切换链接的目标，没有译本时退回另一语言的首页。"""
+    t = L10N[lang]
+    home = f"{base}{t['prefix']}/" if (base or t["prefix"]) else "/"
     canon = f'{SITE["url"]}{url}'
     img = f'{SITE["url"]}{image}' if image else ""
+    alt_lang = t["switch_to"]
+    hreflang = f'<link rel="alternate" hreflang="{t["html"]}" href="{canon}">'
+    if twin:
+        hreflang += f'<link rel="alternate" hreflang="{L10N[alt_lang]["html"]}" href="{SITE["url"]}{twin}">'
+    zh_url = canon if lang == "zh" else (f'{SITE["url"]}{twin}' if twin else "")
+    if zh_url:
+        hreflang += f'<link rel="alternate" hreflang="x-default" href="{zh_url}">'
+    lang_js = LANG_JS % (json.dumps(lang), json.dumps(twin or None))
+    switch = (f'<a class="lang" href="{other}" hreflang="{L10N[alt_lang]["html"]}" '
+              f'title="{t["switch_title"]}" '
+              f'onclick="try{{localStorage.setItem(\'lang\',\'{alt_lang}\')}}catch(e){{}}">'
+              f'{t["switch"]}</a>')
     return f"""<!DOCTYPE html>
-<html lang="zh-CN"><head>
+<html lang="{t['html']}"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+{lang_js}
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
 <meta name="author" content="{SITE['author']}">
 <link rel="canonical" href="{canon}">
+{hreflang}
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
 <meta property="og:type" content="{'article' if is_post else 'website'}">
 <meta property="og:url" content="{canon}">
-<meta property="og:site_name" content="{SITE['title']}">
-<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="{t['title']}">
+<meta property="og:locale" content="{t['og']}">
+<meta property="og:locale:alternate" content="{L10N[alt_lang]['og']}">
 {f'<meta property="og:image" content="{img}">' if img else ''}
 {f'<meta property="article:published_time" content="{published}">' if published else ''}
 {f'<meta property="article:author" content="{SITE["author"]}">' if is_post else ''}
@@ -151,7 +221,7 @@ def shell(base: str, title: str, desc: str, body: str, is_post: bool,
 <meta name="twitter:description" content="{html.escape(desc)}">
 {f'<meta name="twitter:image" content="{img}">' if img else ''}
 <link rel="icon" href="{base}/favicon.svg" type="image/svg+xml">
-<link rel="alternate" type="application/rss+xml" title="{SITE['title']}" href="{base}/feed.xml">
+<link rel="alternate" type="application/rss+xml" title="{t['title']}" href="{base}{t['prefix']}/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -160,12 +230,12 @@ def shell(base: str, title: str, desc: str, body: str, is_post: bool,
 </head><body>
 {'<div id="bar"></div>' if is_post else ''}
 <header class="site"><div class="in">
-  <a class="brand" href="{home}"><span class="mark" aria-hidden="true"></span>{SITE['title']}</a>
-  <nav><a href="{base}/feed.xml">RSS</a></nav>
+  <a class="brand" href="{home}"><span class="mark" aria-hidden="true"></span>{t['title']}</a>
+  <nav>{switch}<a href="{base}{t['prefix']}/feed.xml">RSS</a></nav>
 </div></header>
 {body}
 <footer class="site"><div class="in">
-  <p class="tag-line">{SITE['tagline']}</p>
+  <p class="tag-line">{t['tagline']}</p>
 </div></footer>
 {POST_JS if is_post else ''}
 </body></html>"""
@@ -237,6 +307,13 @@ header.site .in{max-width:var(--page);margin:0 auto;padding:.9rem 1.5rem;
 header.site nav a{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;
   font-size:.74rem;color:var(--dim);margin-left:1.2rem}
 header.site nav a:hover{color:var(--accent)}
+header.site nav a.lang{color:var(--ink);font-weight:600;padding:.1rem .45rem;border:1px solid var(--line);
+  border-radius:6px}
+header.site nav a.lang:hover{border-color:var(--accent)}
+html[lang="en"] body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  line-height:1.72}
+html[lang="en"] article p{margin-bottom:1.1rem}
+html[lang="en"] .hero h1{max-width:30ch;letter-spacing:-.025em}
 
 /* ── index ────────────────────────────────────────── */
 .masthead{max-width:var(--page);margin:0 auto;padding:5rem 1.5rem 3rem}
@@ -279,14 +356,22 @@ header.site nav a:hover{color:var(--accent)}
 @media (max-width:1000px){ .wrap{display:block} .toc{display:none} }
 article{min-width:0;max-width:var(--measure)}
 
-article h2{margin:3.6rem 0 1.15rem;font-size:1.3rem;line-height:1.5;color:var(--ink);
-  font-weight:790;letter-spacing:-.018em;scroll-margin-top:5.5rem}
-article h3{margin:2.4rem 0 .8rem;font-size:1.05rem;color:var(--ink);font-weight:720}
+/* 层级：正文 17px < h3 ≈20.5px（左色条）< h2 ≈26px；加粗段首始终是正文字号 */
+article h2{margin:3.6rem 0 1.3rem;font-size:1.55rem;line-height:1.4;color:var(--ink);
+  font-weight:820;letter-spacing:-.022em;scroll-margin-top:5.5rem;text-wrap:balance}
+article h3{margin:2.9rem 0 1rem;padding-left:.8rem;border-left:3px solid var(--accent);
+  font-size:1.2rem;line-height:1.45;color:var(--ink);font-weight:760;letter-spacing:-.012em;
+  scroll-margin-top:5.5rem}
+article h2 + h3{margin-top:1.6rem}
+article hr + h2{margin-top:0}
 article p{margin:0 0 1.25rem}
 article strong{color:var(--ink);font-weight:700}
 article a[href]{color:var(--accent);border-bottom:1px solid var(--accent-wash)}
 article a[href]:hover{border-bottom-color:var(--accent)}
-article hr{border:0;border-top:1px solid var(--line);margin:3rem 0}
+article hr{border:0;border-top:1px solid var(--line);margin:3.6rem 0 2.6rem}
+article ul,article ol{margin:0 0 1.25rem;padding-left:1.3rem}
+article li{margin:0 0 .45rem}
+blockquote p{margin:0 0 .6rem} blockquote p:last-child{margin:0}
 blockquote{margin:0 0 1.4rem;padding:1rem 1.2rem;background:var(--raise);
   border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;
   color:var(--dim);font-size:.95rem;line-height:1.82}
@@ -342,15 +427,29 @@ footer.site a{color:var(--accent)}
 """
 
 # ── build ────────────────────────────────────────────────────────────────────
+def cover_of(p: dict) -> str:
+    return p.get("cover") or (re.search(r"!\[.*?\]\((figures/[^)]+)\)", p["body"]) or [None, ""])[1]
+
+def as_list(v) -> list[str]:
+    if isinstance(v, str):
+        v = v.strip("[]").split(",")
+    return [str(a).strip().strip('"').strip("'") for a in (v or []) if str(a).strip()]
+
+def rfc822(d: str) -> str:
+    try:
+        return datetime.strptime(str(d), "%Y-%m-%d").strftime("%a, %d %b %Y 00:00:00 +0000")
+    except ValueError:
+        return ""
+
 def build(base: str) -> None:
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
     (OUT / "style.css").write_text(STYLE)
-    (OUT / "figures").mkdir()
-    for f in sorted(FIGS.iterdir()):
-        if f.suffix.lower() in {".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"}:
-            shutil.copy(f, OUT / "figures" / f.name)
+    shutil.copytree(FIGS, OUT / "figures",
+                    ignore=lambda d, names: [n for n in names if not (Path(d) / n).is_dir()
+                                             and Path(n).suffix.lower() not in
+                                             {".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"}])
     (OUT / ".nojekyll").write_text("")
 
     posts = []
@@ -358,125 +457,138 @@ def build(base: str) -> None:
         meta, body = split_frontmatter(md_path.read_text())
         if not meta.get("title"):
             print(f"  跳过 {md_path.name}（缺 frontmatter）"); continue
-        posts.append({**meta, "slug": meta.get("slug") or md_path.stem, "body": body})
+        lang = meta.get("lang") or ("en" if md_path.name.endswith(".en.md") else "zh")
+        stem = md_path.name[:-len(".en.md")] if md_path.name.endswith(".en.md") else md_path.stem
+        posts.append({**meta, "lang": lang, "slug": meta.get("slug") or stem, "body": body})
     posts.sort(key=lambda p: str(p.get("date", "")), reverse=True)
 
+    def purl(p):   return f'{base}{L10N[p["lang"]]["prefix"]}/posts/{p["slug"]}/'
+    def home(lg):  return f'{base}{L10N[lg]["prefix"]}/'
+    by_key = {(p["lang"], p["slug"]): p for p in posts}
+    def twin_of(p):
+        q = by_key.get((L10N[p["lang"]]["switch_to"], p["slug"]))
+        return purl(q) if q else ""
+
     for p in posts:
+        lg, t = p["lang"], L10N[p["lang"]]
         body_html = render(p["body"], base)
+        # 正文里以 / 开头的站内链接，部署在子路径（如 /blog）时要带上前缀
+        if base:
+            body_html = re.sub(r'href="/(?!/)', f'href="{base}/', body_html)
         heads = re.findall(r'<h2 id="([^"]+)">(.*?)</h2>', body_html)
         toc = ""
         if len(heads) > 2:
-            li = "".join(f'<li><a href="#{a}"><span>{re.sub(r"<[^>]+>","",t)}</span></a></li>'
-                         for a, t in heads)
-            toc = f'<nav class="toc"><p class="lab">目录</p><ol>{li}</ol></nav>'
-        chips = "".join(f'<span class="chip">{html.escape(t)}</span>' for t in p.get("tags", []))
-        mins = max(1, round(len(re.sub(r"<[^>]+>", "", body_html)) / 500))
+            li = "".join(f'<li><a href="#{a}"><span>{re.sub(r"<[^>]+>","",x)}</span></a></li>'
+                         for a, x in heads)
+            toc = f'<nav class="toc"><p class="lab">{t["toc"]}</p><ol>{li}</ol></nav>'
+        chips = "".join(f'<span class="chip">{html.escape(x)}</span>' for x in as_list(p.get("tags")))
+        mins = minutes(re.sub(r"<[^>]+>", "", body_html), lg)
         hero = (f'<section class="hero"><div class="in">{token_strip()}'
                 f'<h1>{html.escape(p["title"])}</h1>'
                 f'<div class="meta"><span>{p.get("date","")}</span><span class="sep"></span>'
                 f'<span>{SITE["author"]}</span><span class="sep"></span>'
-                f'<span>约 {mins} 分钟</span><span class="sep"></span>{chips}</div></div></section>')
-        foot = f'<div class="post-foot"><a href="{base or "/"}">← 全部文章</a></div>'
+                f'<span>{t["mins"].format(n=mins)}</span><span class="sep"></span>{chips}</div></div></section>')
+        foot = f'<div class="post-foot"><a href="{home(lg)}">{t["back"]}</a></div>'
         page = hero + f'<div class="wrap"><article>{body_html}{foot}</article>{toc}</div>'
-        d = OUT / "posts" / p["slug"]; d.mkdir(parents=True)
-        cover = p.get("cover") or (re.search(r"!\[.*?\]\((figures/[^)]+)\)", p["body"]) or [None, ""])[1]
-        purl = f'{base}/posts/{p["slug"]}/'
+        d = OUT / purl(p).removeprefix(base).strip("/"); d.mkdir(parents=True)
+        cover = cover_of(p)
         ld = json.dumps({
             "@context": "https://schema.org", "@type": "BlogPosting",
             "headline": p["title"], "description": p.get("summary", ""),
             "datePublished": str(p.get("date", "")), "dateModified": str(p.get("date", "")),
             "author": {"@type": "Person", "name": SITE["author"]},
-            "publisher": {"@type": "Organization", "name": SITE["title"]},
-            "mainEntityOfPage": f'{SITE["url"]}{purl}',
-            "inLanguage": "zh-CN",
-            "keywords": ", ".join(p.get("tags", [])),
+            "publisher": {"@type": "Organization", "name": t["title"]},
+            "mainEntityOfPage": f'{SITE["url"]}{purl(p)}',
+            "inLanguage": t["html"],
+            "keywords": ", ".join(as_list(p.get("tags"))),
             **({"image": f'{SITE["url"]}{base}/{cover}'} if cover else {}),
         }, ensure_ascii=False)
-        ld_tag = f'<script type="application/ld+json">{ld}</script>'
+        twin = twin_of(p)
         (d / "index.html").write_text(shell(
             base, p["title"], p.get("summary", ""), page, True,
-            url=purl, image=f"{base}/{cover}" if cover else "",
-            published=str(p.get("date", "")), ld=ld_tag))
+            url=purl(p), image=f"{base}/{cover}" if cover else "",
+            published=str(p.get("date", "")),
+            ld=f'<script type="application/ld+json">{ld}</script>',
+            lang=lg, twin=twin, other=twin or home(t["switch_to"])))
 
-    # 旧 slug → 新地址的跳转页
-    for p in posts:
-        raw_aliases = p.get("aliases", [])
-        if isinstance(raw_aliases, str):
-            raw_aliases = [x for x in raw_aliases.strip("[]").split(",")]
-        for old in [str(a).strip().strip('"').strip("'") for a in raw_aliases if str(a).strip()]:
-            new_url = f'{SITE["url"]}{base}/posts/{p["slug"]}/'
-            d = OUT / "posts" / old
-            d.mkdir(parents=True, exist_ok=True)
-            (d / "index.html").write_text(
-                f'<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">'
+        # 旧 slug → 新地址
+        for old in as_list(p.get("aliases")):
+            new_url = f'{SITE["url"]}{purl(p)}'
+            a = OUT / f'{t["prefix"]}/posts/{old}'.strip("/"); a.mkdir(parents=True, exist_ok=True)
+            (a / "index.html").write_text(
+                f'<!DOCTYPE html><html lang="{t["html"]}"><head><meta charset="utf-8">'
                 f'<title>{html.escape(p["title"])}</title>'
                 f'<link rel="canonical" href="{new_url}">'
                 f'<meta name="robots" content="noindex,follow">'
                 f'<meta http-equiv="refresh" content="0; url={new_url}">'
-                f'</head><body><p>已移至 <a href="{new_url}">{new_url}</a></p></body></html>')
+                f'</head><body><p>{t["moved"]} <a href="{new_url}">{new_url}</a></p></body></html>')
 
-    cards = []
-    for idx, p in enumerate(posts):
-        cover = p.get("cover") or (re.search(r"!\[.*?\]\((figures/[^)]+)\)", p["body"]) or [None, ""])[1]
-        img = (f'<span class="cover"><img src="{base}/{cover}" alt="" loading="lazy"></span>'
-               if cover else "")
-        chips = "".join(f'<span class="chip">{html.escape(t)}</span>' for t in p.get("tags", [])[:2])
-        lead = " lead" if idx == 0 else ""
-        cards.append(f'<a class="entry{lead}" href="{base}/posts/{p["slug"]}/">{img}'
-                     f'<span class="body">'
-                     f'<span class="kicker"><time>{p.get("date","")}</time>{chips}</span>'
-                     f'<h2>{html.escape(p["title"])}</h2>'
-                     f'<p class="sum">{html.escape(p.get("summary",""))}</p></span></a>')
-    index = (f'<section class="masthead">{token_strip()}'
-             f'<h1>{SITE["title"]}</h1><p>{SITE["tagline"]}</p></section>'
-             f'<section class="feed">{"".join(cards)}</section>')
-    site_ld = json.dumps({
-        "@context": "https://schema.org", "@type": "Blog",
-        "name": SITE["title"], "description": SITE["tagline"],
-        "url": SITE["url"], "inLanguage": "zh-CN",
-        "author": {"@type": "Person", "name": SITE["author"]},
-        "blogPost": [{"@type": "BlogPosting", "headline": q["title"],
-                      "url": f'{SITE["url"]}{base}/posts/{q["slug"]}/',
-                      "datePublished": str(q.get("date", ""))} for q in posts],
-    }, ensure_ascii=False)
-    home_cover = posts[0].get("cover") if posts else ""
-    (OUT / "index.html").write_text(shell(
-        base, SITE["title"], SITE["tagline"], index, False,
-        url=f"{base}/", image=f"{base}/{home_cover}" if home_cover else "",
-        ld=f'<script type="application/ld+json">{site_ld}</script>'))
+    for lg, t in L10N.items():
+        mine = [p for p in posts if p["lang"] == lg]
+        cards = []
+        for idx, p in enumerate(mine):
+            cover = cover_of(p)
+            img = (f'<span class="cover"><img src="{base}/{cover}" alt="" loading="lazy"></span>'
+                   if cover else "")
+            chips = "".join(f'<span class="chip">{html.escape(x)}</span>' for x in as_list(p.get("tags"))[:2])
+            lead = " lead" if idx == 0 else ""
+            cards.append(f'<a class="entry{lead}" href="{purl(p)}">{img}'
+                         f'<span class="body">'
+                         f'<span class="kicker"><time>{p.get("date","")}</time>{chips}</span>'
+                         f'<h2>{html.escape(p["title"])}</h2>'
+                         f'<p class="sum">{html.escape(p.get("summary",""))}</p></span></a>')
+        index = (f'<section class="masthead">{token_strip()}'
+                 f'<h1>{t["title"]}</h1><p>{t["tagline"]}</p></section>'
+                 f'<section class="feed">{"".join(cards)}</section>')
+        site_ld = json.dumps({
+            "@context": "https://schema.org", "@type": "Blog",
+            "name": t["title"], "description": t["tagline"],
+            "url": f'{SITE["url"]}{home(lg)}', "inLanguage": t["html"],
+            "author": {"@type": "Person", "name": SITE["author"]},
+            "blogPost": [{"@type": "BlogPosting", "headline": q["title"],
+                          "url": f'{SITE["url"]}{purl(q)}',
+                          "datePublished": str(q.get("date", ""))} for q in mine],
+        }, ensure_ascii=False)
+        home_cover = cover_of(mine[0]) if mine else ""
+        idir = OUT / t["prefix"].strip("/"); idir.mkdir(parents=True, exist_ok=True)
+        (idir / "index.html").write_text(shell(
+            base, t["title"], t["tagline"], index, False,
+            url=home(lg), image=f"{base}/{home_cover}" if home_cover else "",
+            ld=f'<script type="application/ld+json">{site_ld}</script>',
+            lang=lg, twin=home(t["switch_to"]), other=home(t["switch_to"])))
 
-    def rfc822(d: str) -> str:
-        try:
-            return datetime.strptime(str(d), "%Y-%m-%d").strftime("%a, %d %b %Y 00:00:00 +0000")
-        except ValueError:
-            return ""
-    rss = "".join(
-        f"<item><title>{html.escape(p['title'])}</title>"
-        f"<link>{SITE['url']}{base}/posts/{p['slug']}/</link>"
-        f"<guid isPermaLink=\"true\">{SITE['url']}{base}/posts/{p['slug']}/</guid>"
-        f"<pubDate>{rfc822(p.get('date',''))}</pubDate>"
-        + "".join(f"<category>{html.escape(t)}</category>" for t in p.get("tags", []))
-        + f"<description>{html.escape(p.get('summary',''))}</description></item>"
-        for p in posts)
-    (OUT / "feed.xml").write_text(
-        '<?xml version="1.0" encoding="UTF-8"?>'
-        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>'
-        f"<title>{SITE['title']}</title><link>{SITE['url']}{base}/</link>"
-        f'<atom:link href="{SITE["url"]}{base}/feed.xml" rel="self" type="application/rss+xml"/>'
-        f"<language>zh-CN</language>"
-        f"<description>{SITE['tagline']}</description>{rss}</channel></rss>")
+        rss = "".join(
+            f"<item><title>{html.escape(p['title'])}</title>"
+            f"<link>{SITE['url']}{purl(p)}</link>"
+            f"<guid isPermaLink=\"true\">{SITE['url']}{purl(p)}</guid>"
+            f"<pubDate>{rfc822(p.get('date',''))}</pubDate>"
+            + "".join(f"<category>{html.escape(x)}</category>" for x in as_list(p.get("tags")))
+            + f"<description>{html.escape(p.get('summary',''))}</description></item>"
+            for p in mine)
+        (idir / "feed.xml").write_text(
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>'
+            f"<title>{t['title']}</title><link>{SITE['url']}{home(lg)}</link>"
+            f'<atom:link href="{SITE["url"]}{home(lg)}feed.xml" rel="self" type="application/rss+xml"/>'
+            f"<language>{t['html']}</language>"
+            f"<description>{t['tagline']}</description>{rss}</channel></rss>")
 
-    # sitemap / robots / favicon
-    urls = [f"{base}/"] + [f"{base}/posts/{p['slug']}/" for p in posts]
+    # sitemap（带 hreflang 互指）/ robots / favicon
+    pages = [(home(lg), home(L10N[lg]["switch_to"]), lg) for lg in L10N] + \
+            [(purl(p), twin_of(p), p["lang"]) for p in posts]
     lastmod = max((str(p.get("date", "")) for p in posts), default="")
+    def entry(u, tw, lg):
+        alts = f'<xhtml:link rel="alternate" hreflang="{L10N[lg]["html"]}" href="{SITE["url"]}{u}"/>'
+        if tw:
+            alts += (f'<xhtml:link rel="alternate" hreflang="{L10N[L10N[lg]["switch_to"]]["html"]}" '
+                     f'href="{SITE["url"]}{tw}"/>')
+        return (f"<url><loc>{SITE['url']}{u}</loc>{alts}"
+                + (f"<lastmod>{lastmod}</lastmod>" if lastmod else "") + "</url>")
     (OUT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>'
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-        + "".join(f"<url><loc>{SITE['url']}{u}</loc>"
-                  + (f"<lastmod>{lastmod}</lastmod>" if lastmod else "")
-                  + f"<changefreq>{'weekly' if u.endswith('/') and u == urls[0] else 'monthly'}</changefreq>"
-                  + f"<priority>{'1.0' if u == urls[0] else '0.8'}</priority></url>" for u in urls)
-        + "</urlset>")
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+        'xmlns:xhtml="http://www.w3.org/1999/xhtml">'
+        + "".join(entry(*x) for x in pages) + "</urlset>")
     (OUT / "robots.txt").write_text(
         f"User-agent: *\nAllow: /\n\nSitemap: {SITE['url']}{base}/sitemap.xml\n")
     (OUT / "favicon.svg").write_text(
@@ -489,7 +601,7 @@ def build(base: str) -> None:
 
     print(f"✓ {len(posts)} 篇 → {OUT.relative_to(ROOT)}  (base={base or '/'})")
     for p in posts:
-        print(f"    /posts/{p['slug']}/  {p['title']}")
+        print(f"    [{p['lang']}] {purl(p)}  {p['title']}" + ("" if twin_of(p) else "  （无译本）"))
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
