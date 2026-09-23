@@ -189,6 +189,10 @@ Twenty-six letters run out. The existing options are to refuse the question or t
 
 **What we ship.** We call it the **wide path**. Each option becomes its own yes/no sub-question, all of them run in the same fan-out over the prefilled document, and the "yes" probabilities are normalised into one distribution. That's how Jev itself describes handling high-cardinality choices: score each option independently, then choose. It answers a 255-option question without truncating, filtering or refusing.
 
+![Figure 6](figures/en/p2-fig06-wide.svg)
+
+*Figure 6: The letter readout runs out of labels at option 26. The wide path turns each option into a yes/no sub-question over the same prefill, then normalises the yes-probabilities into one distribution. The two cards at the bottom are measured: equally accurate where both paths apply, and still answering where letters can't.*
+
 **Result.** On dbpedia14, with 14 options, where both paths apply, they're equally accurate: 0.905 for the letter readout and 0.897 for the wide path (3 better, 4 worse, p = 1.0). On banking77, with 77 options, the letter readout can't even ask the question; the wide path scores 0.422, against 0.013 for chance.
 
 **Trade-off.** The wide path costs one suffix per option, about 6× the compute of the letter readout. Since the two are equally accurate, the default sticks with letters up to 26 and only switches above that, where the letter readout has no answer at all.
@@ -248,9 +252,9 @@ The weakest part of that table is the hard tier. JevBench splits its intelligenc
 
 We assumed we'd done something wrong, until we looked at other people's results:
 
-![Figure 6](figures/en/p2-fig06-ceiling.svg)
+![Figure 7](figures/en/p2-fig07-ceiling.svg)
 
-*Figure 6: Three unrelated projects on the same frozen 4B land in the same band on the hard tier. The three points on the right are trained systems.*
+*Figure 7: Three unrelated projects on the same frozen 4B land in the same band on the hard tier. The three points on the right are trained systems.*
 
 [SemIf](https://github.com/TheoLeeCJ/SemIf), reflex and Quire were built separately on the same frozen 4B, and all three land in the same 0.60–0.65 band. That's the second half of the answer: **the hard-tier gap comes mostly from the model, not the architecture.** Without training, the architecture can't close it.
 
@@ -263,9 +267,9 @@ We fine-tuned the 4B with LoRA, which trains a small set of added weights and le
 - **The teacher's distribution**: a 27B model as teacher, whose full probability distribution we train on only where it got the answer right.
 - **Replay**: 6,000 older items mixed in to guard against forgetting.
 
-![Figure 7](figures/en/p2-fig07-recipes.svg)
+![Figure 8](figures/en/p2-fig08-recipes.svg)
 
-*Figure 7: Our LoRA recipe beside Winnow-12B's.*
+*Figure 8: Our LoRA recipe beside Winnow-12B's.*
 
 The hard tier went down, not up, and the more of the adapter we applied the further it fell. At full strength it got 17 fewer of the 111 public hard items right than the frozen model (paired p = 0.008), and hard-tier calibration error more than tripled. (This experiment compared against the configuration from before the current prompt.)
 
