@@ -177,7 +177,7 @@ LANG_JS = """<script>
 
 def shell(base: str, title: str, desc: str, body: str, is_post: bool,
           url: str = "", image: str = "", published: str = "", ld: str = "",
-          lang: str = "zh", twin: str = "", other: str = "") -> str:
+          lang: str = "zh", twin: str = "", other: str = "", author: str = "") -> str:
     """twin：同一页面的另一语言版本（没有译本就为空，不自动跳）；
     other：切换链接的目标，没有译本时退回另一语言的首页。"""
     t = L10N[lang]
@@ -203,7 +203,7 @@ def shell(base: str, title: str, desc: str, body: str, is_post: bool,
 {lang_js}
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
-<meta name="author" content="{SITE['author']}">
+<meta name="author" content="{html.escape(author or SITE['author'])}">
 <link rel="canonical" href="{canon}">
 {hreflang}
 <meta property="og:title" content="{html.escape(title)}">
@@ -215,7 +215,7 @@ def shell(base: str, title: str, desc: str, body: str, is_post: bool,
 <meta property="og:locale:alternate" content="{L10N[alt_lang]['og']}">
 {f'<meta property="og:image" content="{img}">' if img else ''}
 {f'<meta property="article:published_time" content="{published}">' if published else ''}
-{f'<meta property="article:author" content="{SITE["author"]}">' if is_post else ''}
+{f'<meta property="article:author" content="{html.escape(author or SITE["author"])}">' if is_post else ''}
 <meta name="twitter:card" content="{'summary_large_image' if img else 'summary'}">
 <meta name="twitter:title" content="{html.escape(title)}">
 <meta name="twitter:description" content="{html.escape(desc)}">
@@ -483,10 +483,11 @@ def build(base: str) -> None:
             toc = f'<nav class="toc"><p class="lab">{t["toc"]}</p><ol>{li}</ol></nav>'
         chips = "".join(f'<span class="chip">{html.escape(x)}</span>' for x in as_list(p.get("tags")))
         mins = minutes(re.sub(r"<[^>]+>", "", body_html), lg)
+        author = p.get("author") or SITE["author"]  # 默认作者 Albert；客座文章在 frontmatter 里写 author
         hero = (f'<section class="hero"><div class="in">{token_strip()}'
                 f'<h1>{html.escape(p["title"])}</h1>'
                 f'<div class="meta"><span>{p.get("date","")}</span><span class="sep"></span>'
-                f'<span>{SITE["author"]}</span><span class="sep"></span>'
+                f'<span>{html.escape(author)}</span><span class="sep"></span>'
                 f'<span>{t["mins"].format(n=mins)}</span><span class="sep"></span>{chips}</div></div></section>')
         foot = f'<div class="post-foot"><a href="{home(lg)}">{t["back"]}</a></div>'
         page = hero + f'<div class="wrap"><article>{body_html}{foot}</article>{toc}</div>'
@@ -496,7 +497,7 @@ def build(base: str) -> None:
             "@context": "https://schema.org", "@type": "BlogPosting",
             "headline": p["title"], "description": p.get("summary", ""),
             "datePublished": str(p.get("date", "")), "dateModified": str(p.get("date", "")),
-            "author": {"@type": "Person", "name": SITE["author"]},
+            "author": {"@type": "Person", "name": author},
             "publisher": {"@type": "Organization", "name": t["title"]},
             "mainEntityOfPage": f'{SITE["url"]}{purl(p)}',
             "inLanguage": t["html"],
@@ -509,7 +510,7 @@ def build(base: str) -> None:
             url=purl(p), image=f"{base}/{cover}" if cover else "",
             published=str(p.get("date", "")),
             ld=f'<script type="application/ld+json">{ld}</script>',
-            lang=lg, twin=twin, other=twin or home(t["switch_to"])))
+            lang=lg, twin=twin, other=twin or home(t["switch_to"]), author=author))
 
         # 旧 slug → 新地址
         for old in as_list(p.get("aliases")):
