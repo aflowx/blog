@@ -114,7 +114,8 @@ def render(md: str, base: str) -> str:
             if j < len(lines) and re.match(r"^\*(图 |截图 |动图 |Figure |Screenshot |Animation )", lines[j]):
                 raw = lines[j].strip().strip("*")
                 cap = f"<figcaption>{inline(raw)}</figcaption>"
-                alt = re.sub(r"[`*]", "", re.sub(r"^((图|截图|动图) \d+：|(Figure|Screenshot|Animation) \d+[:.] ?)", "", raw))[:160]
+                alt = re.sub(r"[`*]", "", re.sub(r"^((图|截图|动图) \d+：|(Figure|Screenshot|Animation) \d+[:.] ?)", "", raw))
+                alt = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", alt)[:160]   # 图注里的链接只留文字
                 i = j
             out.append(f'<figure class="fig"><img src="{src}" alt="{html.escape(alt)}" '
                        f'loading="lazy" decoding="async">{cap}</figure>')
