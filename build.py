@@ -8,8 +8,9 @@
 summary / tags / cover）。图放 posts/figures/，正文里用 ![图 N](figures/xxx.svg)
 引用。cover 省略时自动取正文第一张图。推到 main 后 Actions 自动发布。
 
-双语：英文版命名为 <同名>.en.md，frontmatter 里的 slug 与中文版相同即自动配对。
-中文在 /posts/<slug>/，英文在 /en/posts/<slug>/。首次访问按浏览器首选语言跳到
+双语：英文版命名为 <同名>.en.md 即自动配对（按文件名，不按 slug）。
+中文在 /posts/<slug>/，英文在 /en/posts/<slug>/；两版的 slug 一般相同，英文标题差别大时
+英文版可以用自己的 slug（旧地址写进 aliases 留跳转）。首次访问按浏览器首选语言跳到
 对应译本（仅当译本存在；爬虫不跳）；页眉的切换链接会记住读者的选择。
 """
 from __future__ import annotations
@@ -460,14 +461,14 @@ def build(base: str) -> None:
             print(f"  跳过 {md_path.name}（缺 frontmatter）"); continue
         lang = meta.get("lang") or ("en" if md_path.name.endswith(".en.md") else "zh")
         stem = md_path.name[:-len(".en.md")] if md_path.name.endswith(".en.md") else md_path.stem
-        posts.append({**meta, "lang": lang, "slug": meta.get("slug") or stem, "body": body})
+        posts.append({**meta, "lang": lang, "slug": meta.get("slug") or stem, "stem": stem, "body": body})
     posts.sort(key=lambda p: str(p.get("date", "")), reverse=True)
 
     def purl(p):   return f'{base}{L10N[p["lang"]]["prefix"]}/posts/{p["slug"]}/'
     def home(lg):  return f'{base}{L10N[lg]["prefix"]}/'
-    by_key = {(p["lang"], p["slug"]): p for p in posts}
+    by_key = {(p["lang"], p["stem"]): p for p in posts}   # 中英文按文件名配对：x.md ↔ x.en.md
     def twin_of(p):
-        q = by_key.get((L10N[p["lang"]]["switch_to"], p["slug"]))
+        q = by_key.get((L10N[p["lang"]]["switch_to"], p["stem"]))
         return purl(q) if q else ""
 
     for p in posts:
@@ -515,6 +516,8 @@ def build(base: str) -> None:
 
         # 旧 slug → 新地址
         for old in as_list(p.get("aliases")):
+            if old == p["slug"]:
+                continue   # 别名和正式 slug 相同时，跳转页会覆盖正式页
             new_url = f'{SITE["url"]}{purl(p)}'
             a = OUT / f'{t["prefix"]}/posts/{old}'.strip("/"); a.mkdir(parents=True, exist_ok=True)
             (a / "index.html").write_text(
