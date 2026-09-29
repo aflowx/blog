@@ -2,8 +2,8 @@
 title: "Every Speedup Lives on a Curve"
 date: 2026-09-29
 author: Will
-slug: inference-benchmark-arena-aiperf-inferencex
-aliases: [every-speedup-lives-on-a-curve]
+slug: every-speedup-lives-on-a-curve
+aliases: [inference-benchmark-arena-aiperf-inferencex]
 cover: figures/en/cover-benchmark-arena.jpg
 summary: "Every inference performance number is a point on a curve that trades throughput per GPU against speed per user. Using NVIDIA’s AIPerf and SemiAnalysis’s InferenceX, we build a way of reading benchmarks, then apply it to four public “N× faster” claims."
 tags: [inference, benchmarks, AIPerf, InferenceX, performance]
