@@ -10,8 +10,6 @@ cover: figures/cover-b300-results-bottlenecks.jpg
 
 [上篇：成绩与瓶颈](/posts/b300-results-bottlenecks/) · [中篇：GLM 5.2：缩短生成循环](/posts/b300-glm-generation-loop/) · [下篇：Kimi K3：状态、通信与服务选择](/posts/b300-kimi-state-serving/)
 
-> **数据口径说明：** 本系列图表中的基线与中间阶段数值属于内部演练示意，并非逐阶段实测结果；完整方案终点沿用原 AgentX 成果图读数。由这些示意点计算的增幅不能视为已核定的实测提升，也不能用于判断单项优化的因果贡献。
-
 *推理优化系列 · 第3篇（上）*
 
 > **本篇要点**
