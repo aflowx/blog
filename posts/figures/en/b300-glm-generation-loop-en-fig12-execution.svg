@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns2="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" width="1008pt" height="792pt" viewBox="0 0 1008 792" version="1.1">
+ <metadata>
+  <rdf:RDF>
+   <ns2:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:date>2026-10-14T20:09:18.985480</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <ns2:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </ns2:Agent>
+    </dc:creator>
+   </ns2:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 792  L 1008 792  L 1008 0  L 0 0  z " style="fill: #f7f6f0" />
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 66.91104 259.71  L 200.81376 259.71  Q 209.88576 259.71 209.88576 254.21  L 209.88576 186.23  Q 209.88576 180.73 200.81376 180.73  L 66.91104 180.73  Q 57.83904 180.73 57.83904 186.23  L 57.83904 254.21  Q 57.83904 259.71 66.91104 259.71  z " clip-path="url(#p5e601ce99b)" style="fill: #dce8f1; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_3">
+    <path d="M 251.97984 259.71  L 385.88256 259.71  Q 394.95456 259.71 394.95456 254.21  L 394.95456 186.23  Q 394.95456 180.73 385.88256 180.73  L 251.97984 180.73  Q 242.90784 180.73 242.90784 186.23  L 242.90784 254.21  Q 242.90784 259.71 251.97984 259.71  z " clip-path="url(#p5e601ce99b)" style="fill: #dce8f1; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_4">
+    <path d="M 437.04864 259.71  L 570.95136 259.71  Q 580.02336 259.71 580.02336 254.21  L 580.02336 186.23  Q 580.02336 180.73 570.95136 180.73  L 437.04864 180.73  Q 427.97664 180.73 427.97664 186.23  L 427.97664 254.21  Q 427.97664 259.71 437.04864 259.71  z " clip-path="url(#p5e601ce99b)" style="fill: #dce8f1; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_5">
+    <path d="M 622.11744 259.71  L 756.02016 259.71  Q 765.09216 259.71 765.09216 254.21  L 765.09216 186.23  Q 765.09216 180.73 756.02016 180.73  L 622.11744 180.73  Q 613.04544 180.73 613.04544 186.23  L 613.04544 254.21  Q 613.04544 259.71 622.11744 259.71  z " clip-path="url(#p5e601ce99b)" style="fill: #dce8f1; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_6">
+    <path d="M 807.18624 259.71  L 941.08896 259.71  Q 950.16096 259.71 950.16096 254.21  L 950.16096 186.23  Q 950.16096 180.73 941.08896 180.73  L 807.18624 180.73  Q 798.11424 180.73 798.11424 186.23  L 798.11424 254.21  Q 798.11424 259.71 807.18624 259.71  z " clip-path="url(#p5e601ce99b)" style="fill: #dce8f1; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_7">
+    <path d="M 466.07904 413.71  L 632.64096 413.71  Q 641.71296 413.71 641.71296 408.21  L 641.71296 356.73  Q 641.71296 351.23 632.64096 351.23  L 466.07904 351.23  Q 457.00704 351.23 457.00704 356.73  L 457.00704 408.21  Q 457.00704 413.71 466.07904 413.71  z " clip-path="url(#p5e601ce99b)" style="fill: #f0e1d5; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_8">
+    <path d="M 66.91104 485.21  L 442.12896 485.21  Q 451.20096 485.21 451.20096 479.71  L 451.20096 428.23  Q 451.20096 422.73 442.12896 422.73  L 66.91104 422.73  Q 57.83904 422.73 57.83904 428.23  L 57.83904 479.71  Q 57.83904 485.21 66.91104 485.21  z " clip-path="url(#p5e601ce99b)" style="fill: #dce8f1; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_9">
+    <path d="M 466.07904 485.21  L 632.64096 485.21  Q 641.71296 485.21 641.71296 479.71  L 641.71296 428.23  Q 641.71296 422.73 632.64096 422.73  L 466.07904 422.73  Q 457.00704 422.73 457.00704 428.23  L 457.00704 479.71  Q 457.00704 485.21 466.07904 485.21  z " clip-path="url(#p5e601ce99b)" style="fill: #f0e1d5; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_10">
+    <path d="M 656.59104 485.21  L 941.08896 485.21  Q 950.16096 485.21 950.16096 479.71  L 950.16096 428.23  Q 950.16096 422.73 941.08896 422.73  L 656.59104 422.73  Q 647.51904 422.73 647.51904 428.23  L 647.51904 479.71  Q 647.51904 485.21 656.59104 485.21  z " clip-path="url(#p5e601ce99b)" style="fill: #dce8f1; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_11">
+    <path d="M 202.99104 622.71  L 433.05696 622.71  Q 442.12896 622.71 442.12896 617.21  L 442.12896 565.73  Q 442.12896 560.23 433.05696 560.23  L 202.99104 560.23  Q 193.91904 560.23 193.91904 565.73  L 193.91904 617.21  Q 193.91904 622.71 202.99104 622.71  z " clip-path="url(#p5e601ce99b)" style="fill: #dcebdc; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_12">
+    <path d="M 66.91104 694.21  L 442.12896 694.21  Q 451.20096 694.21 451.20096 688.71  L 451.20096 637.23  Q 451.20096 631.73 442.12896 631.73  L 66.91104 631.73  Q 57.83904 631.73 57.83904 637.23  L 57.83904 688.71  Q 57.83904 694.21 66.91104 694.21  z " clip-path="url(#p5e601ce99b)" style="fill: #dce8f1; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_13">
+    <path d="M 466.07904 694.21  L 523.77696 694.21  Q 532.84896 694.21 532.84896 688.71  L 532.84896 637.23  Q 532.84896 631.73 523.77696 631.73  L 466.07904 631.73  Q 457.00704 631.73 457.00704 637.23  L 457.00704 688.71  Q 457.00704 694.21 466.07904 694.21  z " clip-path="url(#p5e601ce99b)" style="fill: #f0e1d5; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_14">
+    <path d="M 547.72704 694.21  L 941.08896 694.21  Q 950.16096 694.21 950.16096 688.71  L 950.16096 637.23  Q 950.16096 631.73 941.08896 631.73  L 547.72704 631.73  Q 538.65504 631.73 538.65504 637.23  L 538.65504 688.71  Q 538.65504 694.21 547.72704 694.21  z " clip-path="url(#p5e601ce99b)" style="fill: #dce8f1; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="text_1">
+    <g transform="translate(59.472 154.4325) scale(0.16 -0.16)" style="fill: #193c35"><text x="200.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="76.18391991509624" text-anchor="middle" transform="scale(1 -1)">The full loop</text></g></g>
+   <g id="text_2">
+    <g transform="translate(105.8624 225.225) scale(0.14 -0.14)" style="fill: #193c35"><text x="200.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="100" text-anchor="middle" transform="scale(1 -1)">Prepare</text></g></g>
+   <g id="patch_15">
+    <path d="M 210.256458 220.22  Q 225.038008 220.22 238.142508 220.22  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 232.142508 217.22  L 238.142508 220.22  L 232.142508 223.22  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="text_3">
+    <g transform="translate(290.9312 225.091563) scale(0.14 -0.14)" style="fill: #193c35"><text x="200.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="100" text-anchor="middle" transform="scale(1 -1)">Run draft</text></g></g>
+   <g id="patch_16">
+    <path d="M 395.325258 220.22  Q 410.106808 220.22 423.211308 220.22  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 417.211308 217.22  L 423.211308 220.22  L 417.211308 223.22  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="text_4">
+    <g transform="translate(476 225.19) scale(0.14 -0.14)" style="fill: #193c35"><text x="200.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="76.20359212715901" text-anchor="middle" transform="scale(1 -1)">Target verify</text></g></g>
+   <g id="patch_17">
+    <path d="M 580.394058 220.22  Q 595.175608 220.22 608.280108 220.22  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 602.280108 217.22  L 608.280108 220.22  L 602.280108 223.22  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="text_5">
+    <g transform="translate(654.0688 225.182344) scale(0.14 -0.14)" style="fill: #193c35"><text x="250.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="72.40773286467487" text-anchor="middle" transform="scale(1 -1)">Accept / commit</text></g></g>
+   <g id="patch_18">
+    <path d="M 765.462858 220.22  Q 780.244408 220.22 793.348908 220.22  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 787.348908 217.22  L 793.348908 220.22  L 787.348908 223.22  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="text_6">
+    <g transform="translate(853.1376 225.134219) scale(0.14 -0.14)" style="fill: #193c35"><text x="150.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="74.57551881034291" text-anchor="middle" transform="scale(1 -1)">Next step</text></g></g>
+   <g id="text_7">
+    <g transform="translate(59.472 324.8525) scale(0.16 -0.16)" style="fill: #193c35"><text x="800.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="84.70881345375273" text-anchor="middle" transform="scale(1 -1)">Before: forward, then prepare the next step</text></g></g>
+   <g id="text_8">
+    <g transform="translate(519.19 387.384219) scale(0.14 -0.14)" style="fill: #193c35"><text x="215.5" y="0" font-family="Arial,Helvetica,sans-serif" font-size="100" text-anchor="middle" transform="scale(1 -1)">CPU plan</text></g></g>
+   <g id="text_9">
+    <g transform="translate(209.936563 458.841563) scale(0.14 -0.14)" style="fill: #193c35"><text x="318.453125" y="0" font-family="Arial,Helvetica,sans-serif" font-size="69.41749995840473" text-anchor="middle" transform="scale(1 -1)">Current GPU forward</text></g></g>
+   <g id="text_10">
+    <g transform="translate(521.36 458.933438) scale(0.14 -0.14)" style="fill: #193c35"><text x="200.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="99.56141994976946" text-anchor="middle" transform="scale(1 -1)">Prep wait</text></g></g>
+   <g id="text_11">
+    <g transform="translate(763.84 458.848125) scale(0.14 -0.14)" style="fill: #193c35"><text x="250.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="90.85897011798434" text-anchor="middle" transform="scale(1 -1)">Next forward</text></g></g>
+   <g id="patch_19">
+    <path d="M 451.565789 453.97  Q 454.102902 453.97 454.962965 453.97  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 448.962965 450.97  L 454.962965 453.97  L 448.962965 456.97  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="patch_20">
+    <path d="M 642.077789 453.97  Q 644.614902 453.97 645.474965 453.97  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 639.474965 450.97  L 645.474965 453.97  L 639.474965 456.97  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="text_12">
+    <g transform="translate(59.472 544.9075) scale(0.16 -0.16)" style="fill: #193c35"><text x="1200.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="74.53523979456514" text-anchor="middle" transform="scale(1 -1)">After: independent preparation starts early; commit still waits for its inputs</text></g></g>
+   <g id="text_13">
+    <g transform="translate(262.384 596.091094) scale(0.13 -0.13)" style="fill: #193c35"><text x="428.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="99.81378026070763" text-anchor="middle" transform="scale(1 -1)">Early CPU planning</text></g></g>
+   <g id="text_14">
+    <g transform="translate(209.936563 667.841563) scale(0.14 -0.14)" style="fill: #193c35"><text x="318.453125" y="0" font-family="Arial,Helvetica,sans-serif" font-size="69.41749995840473" text-anchor="middle" transform="scale(1 -1)">Current GPU forward</text></g></g>
+   <g id="text_15">
+    <g transform="translate(482.928 667.223438) scale(0.12 -0.12)" style="fill: #193c35"><text x="100.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="62.42344508460736" text-anchor="middle" transform="scale(1 -1)">Commit</text></g></g>
+   <g id="text_16">
+    <g transform="translate(709.408 667.848125) scale(0.14 -0.14)" style="fill: #193c35"><text x="250.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="90.85897011798434" text-anchor="middle" transform="scale(1 -1)">Next forward</text></g></g>
+  </g>
+  <g id="text_17">
+   <g transform="translate(50.4 61.236) scale(0.27 -0.27)" style="fill: #193c35"><text x="462.65625" y="0" font-family="Arial,Helvetica,sans-serif" font-size="65.06860423627104" text-anchor="middle" transform="scale(1 -1)">GLM 5.2: Shorten Iteration Gaps</text></g></g>
+  <g id="text_18">
+   <g transform="translate(50.4 90.516) scale(0.15 -0.15)" style="fill: #586b63"><text x="1550.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="98.14549518281666" text-anchor="middle" transform="scale(1 -1)">Dependencies determine what can overlap within a speculative iteration</text></g></g>
+  <g id="text_19">
+   <g transform="translate(50.4 755.568) scale(0.13 -0.13)" style="fill: #237958"><text x="1487.3203125" y="0" font-family="Arial,Helvetica,sans-serif" font-size="86.0177396949276" text-anchor="middle" transform="scale(1 -1)">Control-sync microbenchmark: 160.9 → 75.9 μs/call, not the full runtime stage.</text></g></g>
+  <g id="text_20">
+   <g transform="translate(50.4 776.952) scale(0.11 -0.11)" style="fill: #586b63"><text x="1765.203125" y="0" font-family="Arial,Helvetica,sans-serif" font-size="78.32907005243663" text-anchor="middle" transform="scale(1 -1)">Graph coverage and planning overlap here; control collection/shared-expert overlap are DPA/EP work.</text></g></g>
+ </g>
+ <defs>
+  <clipPath id="p5e601ce99b">
+   <rect x="50.4" y="126.72" width="907.2" height="594" />
+  </clipPath>
+ </defs>
+</svg>

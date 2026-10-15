@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns2="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" width="1008pt" height="864pt" viewBox="0 0 1008 864" version="1.1">
+ <metadata>
+  <rdf:RDF>
+   <ns2:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:date>2026-10-14T20:06:38.810062</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <ns2:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </ns2:Agent>
+    </dc:creator>
+   </ns2:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 864  L 1008 864  L 1008 0  L 0 0  z " style="fill: #f7f6f0" />
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 66.91104 320.8464  L 451.20096 320.8464  Q 460.27296 320.8464 460.27296 314.3664  L 460.27296 221.3136  Q 460.27296 214.8336 451.20096 214.8336  L 66.91104 214.8336  Q 57.83904 214.8336 57.83904 221.3136  L 57.83904 314.3664  Q 57.83904 320.8464 66.91104 320.8464  z " clip-path="url(#p1a94260a0f)" style="fill: #dce8f1; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_3">
+    <path d="M 556.79904 320.8464  L 941.08896 320.8464  Q 950.16096 320.8464 950.16096 314.3664  L 950.16096 221.3136  Q 950.16096 214.8336 941.08896 214.8336  L 556.79904 214.8336  Q 547.72704 214.8336 547.72704 221.3136  L 547.72704 314.3664  Q 547.72704 320.8464 556.79904 320.8464  z " clip-path="url(#p1a94260a0f)" style="fill: #dcebdc; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_4">
+    <path d="M 66.91104 443.9664  L 451.20096 443.9664  Q 460.27296 443.9664 460.27296 437.4864  L 460.27296 363.8736  Q 460.27296 357.3936 451.20096 357.3936  L 66.91104 357.3936  Q 57.83904 357.3936 57.83904 363.8736  L 57.83904 437.4864  Q 57.83904 443.9664 66.91104 443.9664  z " clip-path="url(#p1a94260a0f)" style="fill: #dce8f1; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_5">
+    <path d="M 556.79904 443.9664  L 941.08896 443.9664  Q 950.16096 443.9664 950.16096 437.4864  L 950.16096 363.8736  Q 950.16096 357.3936 941.08896 357.3936  L 556.79904 357.3936  Q 547.72704 357.3936 547.72704 363.8736  L 547.72704 437.4864  Q 547.72704 443.9664 556.79904 443.9664  z " clip-path="url(#p1a94260a0f)" style="fill: #dcebdc; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_6">
+    <path d="M 66.91104 612.4464  L 324.19296 612.4464  Q 333.26496 612.4464 333.26496 605.9664  L 333.26496 551.7936  Q 333.26496 545.3136 324.19296 545.3136  L 66.91104 545.3136  Q 57.83904 545.3136 57.83904 551.7936  L 57.83904 605.9664  Q 57.83904 612.4464 66.91104 612.4464  z " clip-path="url(#p1a94260a0f)" style="fill: #f0e1d5; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_7">
+    <path d="M 375.35904 612.4464  L 632.64096 612.4464  Q 641.71296 612.4464 641.71296 605.9664  L 641.71296 551.7936  Q 641.71296 545.3136 632.64096 545.3136  L 375.35904 545.3136  Q 366.28704 545.3136 366.28704 551.7936  L 366.28704 605.9664  Q 366.28704 612.4464 375.35904 612.4464  z " clip-path="url(#p1a94260a0f)" style="fill: #f0e1d5; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_8">
+    <path d="M 683.80704 612.4464  L 941.08896 612.4464  Q 950.16096 612.4464 950.16096 605.9664  L 950.16096 551.7936  Q 950.16096 545.3136 941.08896 545.3136  L 683.80704 545.3136  Q 674.73504 545.3136 674.73504 551.7936  L 674.73504 605.9664  Q 674.73504 612.4464 683.80704 612.4464  z " clip-path="url(#p1a94260a0f)" style="fill: #f0e1d5; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_9">
+    <path d="M 66.91104 735.5664  L 324.19296 735.5664  Q 333.26496 735.5664 333.26496 729.0864  L 333.26496 674.9136  Q 333.26496 668.4336 324.19296 668.4336  L 66.91104 668.4336  Q 57.83904 668.4336 57.83904 674.9136  L 57.83904 729.0864  Q 57.83904 735.5664 66.91104 735.5664  z " clip-path="url(#p1a94260a0f)" style="fill: #dcebdc; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_10">
+    <path d="M 375.35904 735.5664  L 632.64096 735.5664  Q 641.71296 735.5664 641.71296 729.0864  L 641.71296 674.9136  Q 641.71296 668.4336 632.64096 668.4336  L 375.35904 668.4336  Q 366.28704 668.4336 366.28704 674.9136  L 366.28704 729.0864  Q 366.28704 735.5664 375.35904 735.5664  z " clip-path="url(#p1a94260a0f)" style="fill: #dcebdc; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_11">
+    <path d="M 683.80704 735.5664  L 941.08896 735.5664  Q 950.16096 735.5664 950.16096 729.0864  L 950.16096 674.9136  Q 950.16096 668.4336 941.08896 668.4336  L 683.80704 668.4336  Q 674.73504 668.4336 674.73504 674.9136  L 674.73504 729.0864  Q 674.73504 735.5664 683.80704 735.5664  z " clip-path="url(#p1a94260a0f)" style="fill: #dcebdc; stroke: #c4cfc5; stroke-width: 0.8; stroke-linejoin: miter" />
+   </g>
+   <g id="text_1">
+    <g transform="translate(59.472 156.93625) scale(0.16 -0.16)" style="fill: #193c35"><text x="1556.5078125" y="0" font-family="Arial,Helvetica,sans-serif" font-size="91.89952212413755" text-anchor="middle" transform="scale(1 -1)">Fused low-rank projection: [M, 6144] × [6144, 2624]; BF16 weights ≈32.2 MB</text></g></g>
+   <g id="text_2">
+    <g transform="translate(59.472 194.876797) scale(0.13 -0.13)" style="fill: #586b63"><text x="1521.5546875" y="0" font-family="Arial,Helvetica,sans-serif" font-size="88.64285876038859" text-anchor="middle" transform="scale(1 -1)">Replicated on each rank: TP4/TP8 leave K/N unchanged. Check the actual M.</text></g></g>
+   <g id="text_3">
+    <g transform="translate(195.813422 263.122031) scale(0.15 -0.15)" style="fill: #193c35"><text x="423.9140625" y="0" font-family="Arial,Helvetica,sans-serif" font-size="100" text-anchor="middle" transform="scale(1 -1)">M=16; AI≈15.9</text></g><g transform="translate(171.485297 283.882969) scale(0.15 -0.15)" style="fill: #193c35"><text x="583.8046875" y="0" font-family="Arial,Helvetica,sans-serif" font-size="85.1008567766309" text-anchor="middle" transform="scale(1 -1)">HBM bandwidth sets the bound</text></g></g>
+   <g id="text_4">
+    <g transform="translate(673.235016 263.122031) scale(0.15 -0.15)" style="fill: #193c35"><text x="507.0234375" y="0" font-family="Arial,Helvetica,sans-serif" font-size="100" text-anchor="middle" transform="scale(1 -1)">M=1024; AI≈657.7</text></g><g transform="translate(661.440094 283.934531) scale(0.15 -0.15)" style="fill: #193c35"><text x="583.359375" y="0" font-family="Arial,Helvetica,sans-serif" font-size="88.57942633607009" text-anchor="middle" transform="scale(1 -1)">BF16 compute sets the bound</text></g></g>
+   <g id="patch_12">
+    <path d="M 259.056 328.157314  Q 259.056 342.358471 259.056 354.882577  " style="fill: none; stroke: #3f7098; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 261.856 349.282577  L 259.056 354.882577  L 256.256 349.282577  " style="fill: none; stroke: #3f7098; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="patch_13">
+    <path d="M 748.944 328.157314  Q 748.944 342.358471 748.944 354.882577  " style="fill: none; stroke: #237958; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 751.744 349.282577  L 748.944 354.882577  L 746.144 349.282577  " style="fill: none; stroke: #237958; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="text_5">
+    <g transform="translate(206.556 395.055) scale(0.15 -0.15)" style="fill: #193c35"><text x="350.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="69.16147754065655" text-anchor="middle" transform="scale(1 -1)">Overlap load / compute</text></g><g transform="translate(184.056 416.721797) scale(0.15 -0.15)" style="fill: #193c35"><text x="500.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="81.14826797916328" text-anchor="middle" transform="scale(1 -1)">Keep enough blocks in flight</text></g></g>
+   <g id="text_6">
+    <g transform="translate(703.944 395.031563) scale(0.15 -0.15)" style="fill: #193c35"><text x="300.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="75.27251864601263" text-anchor="middle" transform="scale(1 -1)">Increase tile reuse</text></g><g transform="translate(688.944 416.774531) scale(0.15 -0.15)" style="fill: #193c35"><text x="400.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="56.68764196363557" text-anchor="middle" transform="scale(1 -1)">Use the compute units efficiently</text></g></g>
+   <g id="text_7">
+    <g transform="translate(59.472 486.210703) scale(0.13 -0.13)" style="fill: #586b63"><text x="1400.953125" y="0" font-family="Arial,Helvetica,sans-serif" font-size="68.11937005017835" text-anchor="middle" transform="scale(1 -1)">Analytical M examples; cache behavior, launches, occupancy and synchronization still matter.</text></g></g>
+   <g id="text_8">
+    <g transform="translate(59.472 532.6725) scale(0.16 -0.16)" style="fill: #193c35"><text x="434.3515625" y="0" font-family="Arial,Helvetica,sans-serif" font-size="81.67429635940907" text-anchor="middle" transform="scale(1 -1)">MTP preparation: before</text></g></g>
+   <g id="text_9">
+    <g transform="translate(169.552 573.965391) scale(0.13 -0.13)" style="fill: #193c35"><text x="200.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="86.82008368200837" text-anchor="middle" transform="scale(1 -1)">Two inputs</text></g><g transform="translate(125.527703 592.79) scale(0.13 -0.13)" style="fill: #193c35"><text x="538.6484375" y="0" font-family="Arial,Helvetica,sans-serif" font-size="96.31849433031593" text-anchor="middle" transform="scale(1 -1)">Embedding / hidden state</text></g></g>
+   <g id="patch_14">
+    <path d="M 333.635658 578.88  Q 348.417208 578.88 361.521708 578.88  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 355.921708 576.08  L 361.521708 578.88  L 355.921708 581.68  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="text_10">
+    <g transform="translate(471.5 574.012109) scale(0.13 -0.13)" style="fill: #193c35"><text x="250.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="74.1340530814215" text-anchor="middle" transform="scale(1 -1)">Normalize each</text></g><g transform="translate(465 592.855) scale(0.13 -0.13)" style="fill: #193c35"><text x="300.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="71.55192786634915" text-anchor="middle" transform="scale(1 -1)">Write intermediates</text></g></g>
+   <g id="patch_15">
+    <path d="M 642.083658 578.88  Q 656.865208 578.88 669.969708 578.88  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 664.369708 576.08  L 669.969708 578.88  L 664.369708 581.68  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="text_11">
+    <g transform="translate(786.448 573.979609) scale(0.13 -0.13)" style="fill: #193c35"><text x="200.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="64.08029337965644" text-anchor="middle" transform="scale(1 -1)">Read + concat</text></g><g transform="translate(786.448 592.776797) scale(0.13 -0.13)" style="fill: #193c35"><text x="200.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="74.6654672214101" text-anchor="middle" transform="scale(1 -1)">Then project</text></g></g>
+   <g id="text_12">
+    <g transform="translate(59.472 655.88) scale(0.16 -0.16)" style="fill: #193c35"><text x="484.3515625" y="0" font-family="Arial,Helvetica,sans-serif" font-size="94.30771304881885" text-anchor="middle" transform="scale(1 -1)">MTP preparation: fused</text></g></g>
+   <g id="text_13">
+    <g transform="translate(169.552 697.085391) scale(0.13 -0.13)" style="fill: #193c35"><text x="200.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="86.82008368200837" text-anchor="middle" transform="scale(1 -1)">Two inputs</text></g><g transform="translate(125.527703 715.91) scale(0.13 -0.13)" style="fill: #193c35"><text x="538.6484375" y="0" font-family="Arial,Helvetica,sans-serif" font-size="96.31849433031593" text-anchor="middle" transform="scale(1 -1)">Embedding / hidden state</text></g></g>
+   <g id="patch_16">
+    <path d="M 333.635658 702  Q 348.417208 702 361.521708 702  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 355.921708 699.2  L 361.521708 702  L 355.921708 704.8  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="text_14">
+    <g transform="translate(445.5 697.132109) scale(0.13 -0.13)" style="fill: #193c35"><text x="450.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="90.45971329708354" text-anchor="middle" transform="scale(1 -1)">Two norms, one kernel</text></g><g transform="translate(458.5 715.975) scale(0.13 -0.13)" style="fill: #193c35"><text x="350.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="83.17277981751427" text-anchor="middle" transform="scale(1 -1)">Write concat output</text></g></g>
+   <g id="patch_17">
+    <path d="M 642.083658 702  Q 656.865208 702 669.969708 702  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+    <path d="M 664.369708 699.2  L 669.969708 702  L 664.369708 704.8  " style="fill: none; stroke: #586b63; stroke-width: 1.5; stroke-linecap: round" />
+   </g>
+   <g id="text_15">
+    <g transform="translate(786.448 706.471797) scale(0.13 -0.13)" style="fill: #193c35"><text x="200.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="93.33052217302692" text-anchor="middle" transform="scale(1 -1)">Projection</text></g></g>
+   <g id="text_16">
+    <g transform="translate(59.472 777.810703) scale(0.13 -0.13)" style="fill: #237958"><text x="1530.0" y="0" font-family="Arial,Helvetica,sans-serif" font-size="76.31012621415692" text-anchor="middle" transform="scale(1 -1)">Skip intermediate writes/reads and the concat launch. Normalization and projection remain.</text></g></g>
+  </g>
+  <g id="text_17">
+   <g transform="translate(50.4 64.692) scale(0.27 -0.27)" style="fill: #193c35"><text x="662.65625" y="0" font-family="Arial,Helvetica,sans-serif" font-size="73.0807568774121" text-anchor="middle" transform="scale(1 -1)">GLM 5.2: From Roofline to Kernel Choice</text></g></g>
+  <g id="text_18">
+   <g transform="translate(50.4 97.572) scale(0.15 -0.15)" style="fill: #586b63"><text x="1259.3515625" y="0" font-family="Arial,Helvetica,sans-serif" font-size="71.48739380954271" text-anchor="middle" transform="scale(1 -1)">Tune projection loads and tiles by shape; fuse MTP preparation to remove traffic</text></g></g>
+  <g id="text_19">
+   <g transform="translate(50.4 835.488) scale(0.12 -0.12)" style="fill: #586b63"><text x="1613.359375" y="0" font-family="Arial,Helvetica,sans-serif" font-size="74.90243224411255" text-anchor="middle" transform="scale(1 -1)">Choose expert kernels by routed rows and precision. This BF16 projection is not the whole model.</text></g></g>
+ </g>
+ <defs>
+  <clipPath id="p1a94260a0f">
+   <rect x="50.4" y="138.24" width="907.2" height="648" />
+  </clipPath>
+ </defs>
+</svg>
