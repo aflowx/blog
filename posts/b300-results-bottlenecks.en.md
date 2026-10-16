@@ -1,6 +1,7 @@
 ---
 title: "Making B300s Faster for Coding Agents: Results and Bottlenecks"
-date: 2026-10-14
+date: 2026-10-15
+series_order: 1
 author: Will
 slug: b300-find-the-bottleneck
 cover: figures/en/cover-b300-results-bottlenecks.jpg

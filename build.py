@@ -5,7 +5,7 @@
     python3 build.py --base /blog   # GitHub Pages 项目站（CI 用）
 
 新增文章：在 posts/ 下放一个 .md，开头写 frontmatter（title / date / slug /
-summary / tags / cover）。图放 posts/figures/，正文里用 ![图 N](figures/xxx.svg)
+summary / tags / cover；同日系列可用 series_order: 1、2、3 指定阅读顺序）。图放 posts/figures/，正文里用 ![图 N](figures/xxx.svg)
 引用。cover 省略时自动取正文第一张图。推到 main 后 Actions 自动发布。
 
 双语：英文版命名为 <同名>.en.md 即自动配对（按文件名，不按 slug）。
@@ -462,7 +462,8 @@ def build(base: str) -> None:
         lang = meta.get("lang") or ("en" if md_path.name.endswith(".en.md") else "zh")
         stem = md_path.name[:-len(".en.md")] if md_path.name.endswith(".en.md") else md_path.stem
         posts.append({**meta, "lang": lang, "slug": meta.get("slug") or stem, "stem": stem, "body": body})
-    posts.sort(key=lambda p: str(p.get("date", "")), reverse=True)
+    # Newest publication day first; same-day series follow their reading order.
+    posts.sort(key=lambda p: (str(p.get("date", "")), -int(p.get("series_order", 0))), reverse=True)
 
     def purl(p):   return f'{base}{L10N[p["lang"]]["prefix"]}/posts/{p["slug"]}/'
     def home(lg):  return f'{base}{L10N[lg]["prefix"]}/'

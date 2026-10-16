@@ -1,6 +1,7 @@
 ---
 title: "B300在手，推理就快了吗？（下）——Kimi K3：状态、通信与服务选择"
-date: 2026-10-14
+date: 2026-10-15
+series_order: 3
 author: Will
 slug: b300-kimi-state-serving
 summary: "从状态恢复与投机暂存到历史分片、逐层通信和显存预算，解释Kimi K3的五组优化与服务选择。"

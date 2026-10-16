@@ -1,6 +1,7 @@
 ---
 title: "B300在手，推理就快了吗？（中）——GLM 5.2：缩短生成循环"
-date: 2026-10-14
+date: 2026-10-15
+series_order: 2
 author: Will
 slug: b300-glm-generation-loop
 summary: "从减少重复检索到内核选择、轮间衔接和多会话部署，解释GLM 5.2完整生成循环的四组优化。"

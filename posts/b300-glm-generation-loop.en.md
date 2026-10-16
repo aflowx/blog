@@ -1,6 +1,7 @@
 ---
 title: "GLM 5.2: Speeding Up the Whole Decode Loop"
-date: 2026-10-14
+date: 2026-10-15
+series_order: 2
 author: Will
 slug: glm-5-2-faster-decode-loop
 cover: figures/en/cover-b300-glm-generation-loop.jpg

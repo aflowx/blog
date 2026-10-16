@@ -1,6 +1,7 @@
 ---
 title: "Kimi K3: Faster Serving with Hybrid Attention"
-date: 2026-10-14
+date: 2026-10-15
+series_order: 3
 author: Will
 slug: kimi-k3-state-memory-motion
 cover: figures/en/cover-b300-kimi-state-serving.jpg

@@ -1,6 +1,6 @@
 ---
 title: "图解 Attention 演进史"
-date: 2026-10-13
+date: 2026-10-16
 author: Albert
 slug: attention-evolution
 summary: 从机器翻译中的动态读取讲起，沿保存、读取、遗忘与更新的主线，理解主流 Attention 怎样走向上下文记忆系统，以及未来的可能方向。

@@ -1,6 +1,7 @@
 ---
 title: "B300在手，推理就快了吗？（上）——成绩与瓶颈"
-date: 2026-10-14
+date: 2026-10-15
+series_order: 1
 author: Will
 slug: b300-results-bottlenecks
 summary: "从同样八卡B300的Agent服务出发，拆开成绩口径、历史复用、Roofline与并发批量，定位两种模型的优化路线。"
