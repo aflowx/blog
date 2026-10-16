@@ -473,7 +473,11 @@ def build(base: str) -> None:
 
     for p in posts:
         lg, t = p["lang"], L10N[p["lang"]]
-        body_html = render(p["body"], base)
+        if p.get("content_format") == "html":
+            # Trusted, locally generated rich articles retain SVG interactions and details.
+            body_html = re.sub(r'(src=")figures/', lambda m: m[1] + base + '/figures/', p["body"])
+        else:
+            body_html = render(p["body"], base)
         # 正文里以 / 开头的站内链接，部署在子路径（如 /blog）时要带上前缀
         if base:
             body_html = re.sub(r'href="/(?!/)', f'href="{base}/', body_html)
@@ -484,7 +488,8 @@ def build(base: str) -> None:
                          for a, x in heads)
             toc = f'<nav class="toc"><p class="lab">{t["toc"]}</p><ol>{li}</ol></nav>'
         chips = "".join(f'<span class="chip">{html.escape(x)}</span>' for x in as_list(p.get("tags")))
-        mins = minutes(re.sub(r"<[^>]+>", "", body_html), lg)
+        reading_html = re.sub(r"<(style|script|svg)\b[^>]*>[\s\S]*?</\1>", "", body_html) if p.get("content_format") == "html" else body_html
+        mins = minutes(re.sub(r"<[^>]+>", "", reading_html), lg)
         author = p.get("author") or SITE["author"]  # 默认作者 Albert；客座文章在 frontmatter 里写 author
         hero = (f'<section class="hero"><div class="in">{token_strip()}'
                 f'<h1>{html.escape(p["title"])}</h1>'
